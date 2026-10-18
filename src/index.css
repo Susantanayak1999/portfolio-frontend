@@ -1,0 +1,37 @@
+/* @import "tailwindcss";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #050508;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+} */
+
+@import "tailwindcss";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: #050508;
+  /* Changed from hidden to auto to ensure it never locks */
+  overflow-y: auto !important; 
+  overflow-x: hidden !important;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  50% { transform: translateY(100%); }
+  100% { transform: translateY(-100%); }
+}
