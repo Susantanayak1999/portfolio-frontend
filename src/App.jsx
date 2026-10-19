@@ -168,7 +168,7 @@ function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
 
-   const handleDownloadClick = async (e) => {
+  const handleDownloadClick = async (e) => {
     e.preventDefault(); 
     e.stopPropagation();
     setShowDownloadPopup(true); 
@@ -181,19 +181,26 @@ function AboutScreen({ resume, onClose }) {
         return;
       }
 
-      // We send the LaTeX code as a POST request to avoid URL length/character issues
-      const response = await fetch('https://latexonline.cc/compile', {
+      // Use the YtoTech API which allows CORS
+      const response = await fetch('https://latex.ytotech.com/builds/sync', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        // Encode the body properly
-        body: new URLSearchParams({
-          text: resume.hero.latexCode
+        body: JSON.stringify({
+          compiler: 'pdflatex',
+          resources: [
+            {
+              main: true,
+              content: resume.hero.latexCode
+            }
+          ]
         })
       });
 
-      if (!response.ok) throw new Error("Failed to compile LaTeX");
+      if (!response.ok) {
+        throw new Error("Failed to compile LaTeX");
+      }
       
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
