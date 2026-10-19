@@ -34,7 +34,6 @@ export default function Admin() {
   const handleSave = async () => {
     setStatus('Saving...');
     try {
-      // We send the data without touching pdfUrl
       await client.put('/admin/resume', resume);
       setStatus('✅ Saved successfully! Live site updated.');
       setTimeout(() => setStatus(''), 3000);
@@ -43,13 +42,9 @@ export default function Admin() {
     }
   };
 
-  // --- HERO ---
   const updateHero = (field, value) => setResume({ ...resume, hero: { ...resume.hero, [field]: value } });
-
-  // --- ABOUT ---
   const updateAbout = (field, value) => setResume({ ...resume, about: { ...resume.about, [field]: value } });
-
-  // --- SERVICES ---
+  
   const updateService = (index, field, value) => {
     const newServices = [...resume.services];
     newServices[index][field] = value;
@@ -58,7 +53,6 @@ export default function Admin() {
   const addService = () => setResume({ ...resume, services: [...resume.services, { title: '', description: '' }] });
   const removeService = (index) => setResume({ ...resume, services: resume.services.filter((_, i) => i !== index) });
 
-  // --- EXPERIENCE ---
   const updateExperience = (index, field, value) => {
     const newExp = [...resume.experience];
     newExp[index][field] = value;
@@ -72,13 +66,11 @@ export default function Admin() {
   const addExperience = () => setResume({ ...resume, experience: [...resume.experience, { company: '', role: '', location: '', startDate: '', endDate: '', bullets: [''] }] });
   const removeExperience = (index) => setResume({ ...resume, experience: resume.experience.filter((_, i) => i !== index) });
 
-  // --- SKILLS ---
   const updateSkill = (category, value) => {
     const skillArray = value.split(',').map(s => s.trim()).filter(Boolean);
     setResume({ ...resume, skills: { ...resume.skills, [category]: skillArray } });
   };
 
-  // --- PROJECTS ---
   const updateProject = (index, field, value) => {
     const newProj = [...resume.projects];
     newProj[index][field] = value;
@@ -92,7 +84,6 @@ export default function Admin() {
   const addProject = () => setResume({ ...resume, projects: [...resume.projects, { name: '', description: '', stack: [], liveUrl: '', repoUrl: '' }] });
   const removeProject = (index) => setResume({ ...resume, projects: resume.projects.filter((_, i) => i !== index) });
 
-  // --- EDUCATION ---
   const updateEducation = (index, field, value) => {
     const newEdu = [...resume.education];
     newEdu[index][field] = value;
@@ -127,8 +118,6 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-[#050508] text-slate-300 font-sans pb-32">
-      
-      {/* TOP NAVBAR */}
       <div className="sticky top-0 w-full bg-[#050508]/90 backdrop-blur-xl border-b border-white/10 z-50 px-6 py-4 flex justify-between items-center shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -143,8 +132,6 @@ export default function Admin() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 pt-10">
-
-        {/* HERO SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-cyan-400"></div>
           <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-cyan-400">&gt;</span> Hero Section</h2>
@@ -169,7 +156,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* ABOUT SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
           <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-blue-400">&gt;</span> About Section</h2>
@@ -179,7 +165,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* SERVICES SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
           <div className="flex justify-between items-center mb-6">
@@ -204,7 +189,6 @@ export default function Admin() {
           ))}
         </div>
 
-        {/* EXPERIENCE SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
           <div className="flex justify-between items-center mb-6">
@@ -243,7 +227,6 @@ export default function Admin() {
           ))}
         </div>
 
-        {/* PROJECTS SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
           <div className="flex justify-between items-center mb-6">
@@ -282,7 +265,6 @@ export default function Admin() {
           ))}
         </div>
 
-        {/* SKILLS SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
           <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-yellow-400">&gt;</span> Skills</h2>
@@ -297,7 +279,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* EDUCATION SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
           <div className="flex justify-between items-center mb-6">
@@ -325,17 +306,14 @@ export default function Admin() {
             </div>
           ))}
         </div>
-
       </div>
 
-      {/* FIXED SAVE BUTTON */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f]/90 backdrop-blur-xl border-t border-white/10 p-4 flex justify-between items-center px-10 z-50">
         <span className="font-mono text-cyan-400 font-bold">{status}</span>
         <button onClick={handleSave} className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white px-10 py-3 rounded-xl font-bold shadow-[0_0_20px_rgba(34,197,94,0.4)] transition hover:scale-105">
           Save All Changes
         </button>
       </div>
-
     </div>
   );
 }
