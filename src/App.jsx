@@ -163,52 +163,19 @@ function RobotAssistant() {
   );
 }
 
-// --- 6. The Full Screen About Overlay (BULLETPROOF DOWNLOAD) ---
+// --- 6. The Full Screen About Overlay (FIXED DOWNLOAD LOGIC) ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
 
-  const handleDownloadClick = async (e) => {
+  const handleDownloadClick = (e) => {
     e.preventDefault(); 
     e.stopPropagation();
     setShowDownloadPopup(true); 
     setDownloadState('downloading');
     
-    setTimeout(async () => {
-      try {
-        // Fetch the Base64 string from the database
-        const base64Data = resume.hero.pdfUrl;
-        
-        if (!base64Data) {
-          alert("No resume found. Please upload one in the admin panel.");
-          setShowDownloadPopup(false);
-          return;
-        }
-
-        // Convert the Base64 string to a physical Blob (File)
-        const res = await fetch(base64Data);
-        const blob = await res.blob();
-        
-        // Create a temporary URL for the Blob
-        const url = window.URL.createObjectURL(blob);
-        
-        // Create an invisible anchor tag to trigger the download
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Susanta_Resume.pdf';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        
-        // Clean up the URL
-        window.URL.revokeObjectURL(url);
-        
-        setDownloadState('complete');
-      } catch (error) {
-        console.error("Download failed", error);
-        alert("Failed to process the PDF file.");
-        setShowDownloadPopup(false);
-      }
+    setTimeout(() => {
+      setDownloadState('complete');
     }, 2500);
   };
 
@@ -267,7 +234,7 @@ function AboutScreen({ resume, onClose }) {
             <div className="bg-cyan-500/10 px-5 py-3 border-b border-cyan-500/20 flex items-center justify-between"><div className="flex items-center gap-2"><svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Receipt_Generator</span></div><button type="button" onClick={() => setShowDownloadPopup(false)} className="text-slate-400 hover:text-white transition"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <div className="p-5 font-mono text-sm">
               {downloadState === 'downloading' && (<><div className="flex justify-between mb-2 text-slate-400"><span>Customer:</span><span className="text-white">HR / Recruiter</span></div><div className="flex justify-between mb-2 text-slate-400"><span>Product:</span><span className="text-cyan-400">Susanta's Resume.pdf</span></div><div className="flex justify-between mb-4 text-slate-400"><span>Cost:</span><span className="text-green-400">FREE</span></div><div className="border-t border-dashed border-slate-600 pt-4 mb-4"><div className="flex justify-between mb-2"><span className="text-slate-400">Status:</span><span className="text-yellow-400 animate-pulse">Downloading...</span></div><div className="w-full bg-slate-800 rounded-full h-2 mt-2 overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 2.5, ease: "easeInOut" }} className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" /></div></div><div className="text-[10px] text-slate-500 text-center leading-tight mt-6">Downloading info about Susanta...</div></>)}
-              {downloadState === 'complete' && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center"><div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div><h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4><p className="text-slate-400 text-xs mb-6">The file is ready and has been downloaded.</p><button onClick={() => setShowDownloadPopup(false)} className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition">Close Receipt</button></motion.div>)}
+              {downloadState === 'complete' && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center"><div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div><h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4><p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p><a href="/resume.pdf" target="_blank" rel="noreferrer" download="Susanta_Resume.pdf" onClick={() => setShowDownloadPopup(false)} className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition">Open the Secret<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></motion.div>)}
             </div>
           </motion.div>
         )}

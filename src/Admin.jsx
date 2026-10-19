@@ -34,6 +34,7 @@ export default function Admin() {
   const handleSave = async () => {
     setStatus('Saving...');
     try {
+      // We send the data without touching pdfUrl
       await client.put('/admin/resume', resume);
       setStatus('✅ Saved successfully! Live site updated.');
       setTimeout(() => setStatus(''), 3000);
@@ -160,24 +161,10 @@ export default function Admin() {
               <label className="block text-xs font-mono text-slate-400 mb-2">SUMMARY</label>
               <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl h-28 outline-none focus:border-cyan-500 transition-colors" />
             </div>
-            
             <div className="border-t border-white/10 pt-5 mt-5">
-              <label className="block text-xs font-mono text-cyan-400 mb-2">RESUME_PDF_UPLOAD</label>
-              <div className="flex items-center gap-4">
-                <input type="file" accept=".pdf" onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    updateHero('pdfUrl', reader.result); // Save as Base64 string
-                    setStatus('✅ PDF processed! Click Save to finalize.');
-                  };
-                  reader.readAsDataURL(file);
-                }} 
-                  className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 transition-all cursor-pointer" 
-                />
-              </div>
-              {resume.hero.pdfUrl && <p className="text-xs text-green-400 mt-3 font-mono flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> PDF Attached Successfully</p>}
+              <p className="text-sm text-cyan-400 font-mono bg-cyan-500/10 p-4 rounded-xl border border-cyan-500/20">
+                To update your PDF Resume, simply replace the <strong>resume.pdf</strong> file inside the <code>frontend/public/</code> folder in your code.
+              </p>
             </div>
           </div>
         </div>
