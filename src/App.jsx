@@ -177,13 +177,16 @@ function AboutScreen({ resume, onClose }) {
     setTimeout(() => {
       setDownloadState('complete');
       if (resume.hero.pdfUrl) {
-        setDownloadUrl(resume.hero.pdfUrl); // Uses the Cloudinary URL from the DB
+        // If the backend returns '/uploads/filename.pdf', this combines it with the Render URL
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const backendUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
+        setDownloadUrl(`${backendUrl}${resume.hero.pdfUrl}`);
       } else {
         setDownloadUrl('#');
       }
     }, 2500);
   };
-  
+
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
