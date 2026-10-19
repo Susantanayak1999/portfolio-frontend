@@ -92,31 +92,16 @@ export default function Admin() {
           <input value={resume.hero.name} onChange={e => updateHero('name', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" />
           <input value={resume.hero.headline} onChange={e => updateHero('headline', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" />
           <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-6 rounded-xl h-24" />
-          
-          <div className="border-t border-white/10 pt-4">
-            <label className="block text-xs font-mono text-cyan-400 mb-2">UPLOAD RESUME (PDF)</label>
-            <input 
-              type="file" 
-              accept=".pdf"
-              onChange={async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const formData = new FormData();
-                formData.append('resume', file);
-                try {
-                  setStatus('Uploading PDF...');
-                  const uploadRes = await client.post('/admin/upload', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                  });
-                  updateHero('pdfUrl', uploadRes.data.fileUrl); 
-                  setStatus('✅ PDF Uploaded! Click Save to finalize.');
-                } catch (err) {
-                  setStatus('❌ Error uploading PDF');
-                }
-              }} 
-              className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl cursor-pointer" 
+
+         // Find this section inside Hero Section:
+          <div className="border-t border-white/10 pt-5 mt-5">
+            <label className="block text-xs font-mono text-cyan-400 mb-2">PASTE LATEX CODE HERE</label>
+            <textarea
+              value={resume.hero.latexCode || ''}
+              onChange={e => updateHero('latexCode', e.target.value)}
+              className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 h-64 rounded-xl font-mono text-sm outline-none focus:border-cyan-500 transition-colors"
+              placeholder="\documentclass{article}..."
             />
-            {resume.hero.pdfUrl && <p className="text-sm text-green-400 mt-2">Current PDF attached ✓</p>}
           </div>
         </div>
 

@@ -168,23 +168,37 @@ function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
 
-  const handleDownloadClick = (e) => {
+  const handleDownloadClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     setShowDownloadPopup(true);
     setDownloadState('downloading');
 
-    setTimeout(() => {
-      setDownloadState('complete');
-      if (resume.hero.pdfUrl) {
-        // If the backend returns '/uploads/filename.pdf', this combines it with the Render URL
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const backendUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
-        setDownloadUrl(`${backendUrl}${resume.hero.pdfUrl}`);
-      } else {
-        setDownloadUrl('#');
+    try {
+      if (!resume.hero.latexCode) {
+        alert("No LaTeX code found. Please add it in the Admin panel.");
+        setShowDownloadPopup(false);
+        return;
       }
-    }, 2500);
+
+      // Encode the LaTeX code
+      const encodedLatex = encodeURIComponent(resume.hero.latexCode);
+      const apiUrl = `https://latexonline.cc/compile?text=${encodedLatex}`;
+
+      // Fetch the compiled PDF
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error("Failed to compile LaTeX");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      setDownloadState('complete');
+      setDownloadUrl(url);
+    } catch (error) {
+      console.error(error);
+      alert("Error generating PDF from LaTeX. Please check your LaTeX syntax.");
+      setShowDownloadPopup(false);
+    }
   };
 
   return (
