@@ -168,12 +168,12 @@ function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
 
-  const handleDownloadClick = async (e) => {
-    e.preventDefault();
+   const handleDownloadClick = async (e) => {
+    e.preventDefault(); 
     e.stopPropagation();
-    setShowDownloadPopup(true);
+    setShowDownloadPopup(true); 
     setDownloadState('downloading');
-
+    
     try {
       if (!resume.hero.latexCode) {
         alert("No LaTeX code found. Please add it in the Admin panel.");
@@ -181,17 +181,23 @@ function AboutScreen({ resume, onClose }) {
         return;
       }
 
-      // Encode the LaTeX code
-      const encodedLatex = encodeURIComponent(resume.hero.latexCode);
-      const apiUrl = `https://latexonline.cc/compile?text=${encodedLatex}`;
+      // We send the LaTeX code as a POST request to avoid URL length/character issues
+      const response = await fetch('https://latexonline.cc/compile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        // Encode the body properly
+        body: new URLSearchParams({
+          text: resume.hero.latexCode
+        })
+      });
 
-      // Fetch the compiled PDF
-      const response = await fetch(apiUrl);
       if (!response.ok) throw new Error("Failed to compile LaTeX");
-
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-
+      
       setDownloadState('complete');
       setDownloadUrl(url);
     } catch (error) {
