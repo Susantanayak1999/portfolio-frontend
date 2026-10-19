@@ -20,10 +20,7 @@ function TechBadge({ label }) {
       className="relative cursor-default"
       style={{ transformStyle: 'preserve-3d' }}
     >
-      {/* Background layer for the 3D depth effect */}
       <div className="absolute inset-0 bg-cyan-900/40 rounded-lg blur-sm transform translate-y-1 translate-x-1"></div>
-      
-      {/* Main 3D Block */}
       <div className="relative z-10 px-3 py-1.5 bg-[#12121a] border-t border-l border-white/20 border-b border-r border-black rounded-lg flex items-center justify-center">
         <span className="text-xs font-bold text-cyan-300 tracking-wider font-mono">
           {label}
@@ -245,7 +242,10 @@ function AboutScreen({ resume, onClose }) {
       
       if (resume.hero.pdfUrl) {
         const cleanUrl = resume.hero.pdfUrl.startsWith('/') ? resume.hero.pdfUrl : `/${resume.hero.pdfUrl}`;
-        setDownloadUrl(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${cleanUrl}`);
+        // HARDCODED PRODUCTION URL HERE
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const backendUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
+        setDownloadUrl(`${backendUrl}${cleanUrl}`);
       } else {
         setDownloadUrl('#');
       }
@@ -491,7 +491,6 @@ function App() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   
-  // Mobile Menu State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -515,7 +514,7 @@ function App() {
 
   const handleAboutClick = () => {
     setIsTransitioning(true);
-    setIsMobileMenuOpen(false); // Close menu if open
+    setIsMobileMenuOpen(false);
   };
   
   const handleTransitionComplete = () => {
@@ -539,32 +538,27 @@ function App() {
         {showAbout && <AboutScreen resume={resume} onClose={() => setShowAbout(false)} />}
       </AnimatePresence>
 
-      {/* BACKGROUND STARFIELD */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Canvas camera={{ position: [0, 0, 1] }}>
           <ParticleField />
         </Canvas>
       </div>
 
-      {/* BACKGROUND GRADIENTS */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full"></div>
         <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full"></div>
       </div>
 
-      {/* SCROLL PROGRESS BAR */}
       <div className="fixed top-0 left-0 right-0 h-1 z-[100] bg-transparent">
         <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-600" style={{ width: `${scrollProgress}%` }} />
       </div>
 
-      {/* NAVIGATION */}
       <nav className="fixed top-0 w-full bg-[#050508]/70 backdrop-blur-xl border-b border-white/5 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <a href="#" className="text-2xl font-black text-white tracking-tighter">
             {resume.hero.name.split(' ')[0]}<span className="text-cyan-400">.</span>
           </a>
           
-          {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8 text-sm font-semibold">
             <button onClick={handleAboutClick} className="hover:text-cyan-400 transition-colors">About</button>
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
@@ -577,8 +571,6 @@ function App() {
             <a href={`mailto:${resume.hero.email}`} className="hidden md:block bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-2.5 rounded-full font-semibold transition backdrop-blur-sm">
               Hire Me
             </a>
-
-            {/* Mobile Hamburger Button */}
             <button 
               className="md:hidden text-white p-2"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -594,7 +586,6 @@ function App() {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -616,10 +607,8 @@ function App() {
         </AnimatePresence>
       </nav>
 
-      {/* MAIN CONTENT */}
       <main className="max-w-7xl mx-auto px-6 relative z-10">
 
-        {/* HERO SECTION */}
         <section id="hero" className="min-h-[90vh] flex items-center pt-20 pb-12 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
             <div>
@@ -676,7 +665,6 @@ function App() {
           </div>
         </section>
 
-        {/* STATS BAR */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-32 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
           {[{ value: "2+", label: "Years Exp" }, { value: "500+", label: "Users Supported" }, { value: "L2/L3", label: "Production" }, { value: "100%", label: "SLA Met" }].map((stat, i) => (
             <div key={i} className="text-center border-r border-white/10 last:border-0">
@@ -686,7 +674,6 @@ function App() {
           ))}
         </div>
 
-        {/* SERVICES SECTION */}
         <section id="services" className="mb-32">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">What I Bring to the Table</h2>
@@ -709,7 +696,6 @@ function App() {
           </div>
         </section>
 
-        {/* PROJECTS SECTION */}
         <section id="projects" className="mb-32">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Featured Work</h2>
           
@@ -765,7 +751,6 @@ function App() {
 
           </div>
 
-          {/* The "Want to see more" Call to Action */}
           <div className="mt-16 text-center bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-md relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] group-hover:bg-cyan-500/20 transition-all"></div>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 relative z-10">
@@ -786,7 +771,6 @@ function App() {
           </div>
         </section>
 
-        {/* EXPERIENCE SECTION */}
         <section id="experience" className="mb-32">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Professional Journey</h2>
           <div className="max-w-4xl mx-auto space-y-8">
@@ -807,7 +791,6 @@ function App() {
           </div>
         </section>
 
-        {/* SKILLS SECTION */}
         <section id="skills" className="mb-32">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Technical Arsenal</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -826,7 +809,6 @@ function App() {
           </div>
         </section>
 
-        {/* FOOTER */}
         <section className="border-t border-white/10 pt-16 pb-8 text-center flex flex-col items-center">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">great.</span></h2>
           <p className="text-slate-400 mb-10 max-w-lg text-lg">Currently open for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
