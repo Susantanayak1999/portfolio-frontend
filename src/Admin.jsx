@@ -35,7 +35,7 @@ export default function Admin() {
     setStatus('Saving...');
     try {
       await client.put('/admin/resume', resume);
-      setStatus('✅ Live site updated successfully!');
+      setStatus('✅ Saved successfully! Live site updated.');
       setTimeout(() => setStatus(''), 3000);
     } catch (err) {
       setStatus('❌ Error saving data');
@@ -164,18 +164,16 @@ export default function Admin() {
             <div className="border-t border-white/10 pt-5 mt-5">
               <label className="block text-xs font-mono text-cyan-400 mb-2">RESUME_PDF_UPLOAD</label>
               <div className="flex items-center gap-4">
-                <input type="file" accept=".pdf" onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const formData = new FormData();
-                    formData.append('resume', file);
-                    try {
-                      setStatus('Uploading PDF...');
-                      const uploadRes = await client.post('/admin/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-                      updateHero('pdfUrl', uploadRes.data.fileUrl);
-                      setStatus('✅ PDF Uploaded! Click Save to finalize.');
-                    } catch (err) { setStatus('❌ Error uploading PDF'); }
-                  }} 
+                <input type="file" accept=".pdf" onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    updateHero('pdfUrl', reader.result); // Save as Base64 string
+                    setStatus('✅ PDF processed! Click Save to finalize.');
+                  };
+                  reader.readAsDataURL(file);
+                }} 
                   className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 transition-all cursor-pointer" 
                 />
               </div>

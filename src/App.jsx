@@ -177,8 +177,12 @@ function AboutScreen({ resume, onClose }) {
     
     setTimeout(() => {
       setDownloadState('complete');
-      // Point directly to the file in the frontend public folder
-      setDownloadUrl('/resume.pdf'); 
+      // The URL is now the Base64 string directly from the database
+      if (resume.hero.pdfUrl) {
+        setDownloadUrl(resume.hero.pdfUrl); 
+      } else {
+        setDownloadUrl('#'); 
+      }
     }, 2500);
   };
 
