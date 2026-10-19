@@ -177,14 +177,8 @@ function AboutScreen({ resume, onClose }) {
     
     setTimeout(() => {
       setDownloadState('complete');
-      if (resume.hero.pdfUrl) {
-        const cleanUrl = resume.hero.pdfUrl.startsWith('/') ? resume.hero.pdfUrl : `/${resume.hero.pdfUrl}`;
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const backendUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
-        setDownloadUrl(`${backendUrl}${cleanUrl}`);
-      } else {
-        setDownloadUrl('#'); 
-      }
+      // Point directly to the file in the frontend public folder
+      setDownloadUrl('/resume.pdf'); 
     }, 2500);
   };
 
