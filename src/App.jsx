@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial, Float, Icosahedron, Box, Torus, Sphere } from '@react-three/drei';
 import gsap from 'gsap';
-import html2pdf from 'html2pdf.js';
 
 // --- 0. The 3D Tech Badge Component ---
 function TechBadge({ label }) {
@@ -164,36 +163,25 @@ function RobotAssistant() {
   );
 }
 
-// --- 6. The Full Screen About Overlay (FIXED DOWNLOAD LOGIC) ---
+// --- 6. The Full Screen About Overlay (With Download) ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
+  const [downloadUrl, setDownloadUrl] = useState('');
 
   const handleDownloadClick = (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     e.stopPropagation();
-    setShowDownloadPopup(true);
+    setShowDownloadPopup(true); 
     setDownloadState('downloading');
-
-    setTimeout(async () => {
-      try {
-        const element = document.getElementById('hidden-resume-template');
-
-        const opt = {
-          margin: 0.5,
-          filename: 'Susanta_Resume.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-
-        await html2pdf().set(opt).from(element).save();
-        setDownloadState('complete');
-      } catch (error) {
-        console.error("PDF Generation Error:", error);
-        alert("Error generating PDF: " + error.message);
-        setShowDownloadPopup(false);
-      }
+    
+    setTimeout(() => {
+      setDownloadState('complete');
+      
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const backendUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
+      setDownloadUrl(`${backendUrl}/api/resume/download-latex`); 
+      
     }, 2500);
   };
 
@@ -252,80 +240,30 @@ function AboutScreen({ resume, onClose }) {
             <div className="bg-cyan-500/10 px-5 py-3 border-b border-cyan-500/20 flex items-center justify-between"><div className="flex items-center gap-2"><svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Receipt_Generator</span></div><button type="button" onClick={() => setShowDownloadPopup(false)} className="text-slate-400 hover:text-white transition"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <div className="p-5 font-mono text-sm">
               {downloadState === 'downloading' && (<><div className="flex justify-between mb-2 text-slate-400"><span>Customer:</span><span className="text-white">HR / Recruiter</span></div><div className="flex justify-between mb-2 text-slate-400"><span>Product:</span><span className="text-cyan-400">Susanta's Resume.pdf</span></div><div className="flex justify-between mb-4 text-slate-400"><span>Cost:</span><span className="text-green-400">FREE</span></div><div className="border-t border-dashed border-slate-600 pt-4 mb-4"><div className="flex justify-between mb-2"><span className="text-slate-400">Status:</span><span className="text-yellow-400 animate-pulse">Downloading...</span></div><div className="w-full bg-slate-800 rounded-full h-2 mt-2 overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 2.5, ease: "easeInOut" }} className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" /></div></div><div className="text-[10px] text-slate-500 text-center leading-tight mt-6">Generating PDF from database...</div></>)}
-              {downloadState === 'complete' && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center"><div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div><h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4><p className="text-slate-400 text-xs mb-6">The file has been saved to your device.</p><button onClick={() => setShowDownloadPopup(false)} className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition">Close Receipt</button></motion.div>)}
+              {downloadState === 'complete' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+                  <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div>
+                  <h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4>
+                  <p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p>
+                  
+                  {/* 👇 THIS IS THE BUTTON YOU WERE LOOKING FOR 👇 */}
+                  <a 
+                    href={downloadUrl} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    download="Susanta_Resume.pdf" 
+                    onClick={() => setShowDownloadPopup(false)} 
+                    className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
+                  >
+                    Open the Secret
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  </a>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* HIDDEN HTML TEMPLATE FOR PDF GENERATION */}
-      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: -100, opacity: 0, pointerEvents: 'none' }}>
-        <div id="hidden-resume-template" style={{ width: '800px', backgroundColor: 'white', color: 'black', padding: '40px', fontFamily: 'serif' }}>
-
-          <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <h1 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>{resume.hero.name}</h1>
-            <p style={{ fontSize: '16px', margin: '4px 0' }}>{resume.hero.headline}</p>
-            <p style={{ fontSize: '12px', margin: 0 }}>
-              {resume.hero.email} | {resume.hero.linkedin} | {resume.hero.github}
-            </p>
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', borderBottom: '1px solid gray', paddingBottom: '4px', marginBottom: '8px', color: '#1e3a8a' }}>PROFESSIONAL SUMMARY</h2>
-            <p style={{ fontSize: '12px', textAlign: 'justify', margin: 0 }}>{resume.about?.summary || resume.hero.summary}</p>
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', borderBottom: '1px solid gray', paddingBottom: '4px', marginBottom: '8px', color: '#1e3a8a' }}>SKILLS</h2>
-            <div style={{ fontSize: '12px' }}>
-              {Object.entries(resume.skills).map(([cat, list]) => (
-                <div key={cat} style={{ marginBottom: '4px' }}>
-                  <strong style={{ textTransform: 'capitalize' }}>{cat}:</strong> {list.join(', ')}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', borderBottom: '1px solid gray', paddingBottom: '4px', marginBottom: '8px', color: '#1e3a8a' }}>EXPERIENCE</h2>
-            {resume.experience.map((exp, i) => (
-              <div key={i} style={{ marginBottom: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '14px' }}>
-                  <span>{exp.role}</span>
-                  <span>{exp.startDate} - {exp.endDate}</span>
-                </div>
-                <div style={{ fontSize: '12px', marginBottom: '4px' }}>{exp.company} • {exp.location}</div>
-                <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '12px' }}>
-                  {exp.bullets.map((b, j) => <li key={j} style={{ marginBottom: '4px' }}>{b}</li>)}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', borderBottom: '1px solid gray', paddingBottom: '4px', marginBottom: '8px', color: '#1e3a8a' }}>PROJECTS</h2>
-            {resume.projects.map((proj, i) => (
-              <div key={i} style={{ marginBottom: '12px' }}>
-                <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{proj.name}</div>
-                <div style={{ fontSize: '12px', color: '#555', marginBottom: '4px' }}>{proj.stack.join(', ')}</div>
-                <p style={{ fontSize: '12px', margin: 0 }}>{proj.description}</p>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 'bold', borderBottom: '1px solid gray', paddingBottom: '4px', marginBottom: '8px', color: '#1e3a8a' }}>EDUCATION</h2>
-            {resume.education.map((edu, i) => (
-              <div key={i} style={{ marginBottom: '8px', fontSize: '12px' }}>
-                <div style={{ fontWeight: 'bold' }}>{edu.degree}</div>
-                <div>{edu.institution} • {edu.year}</div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </div>
-
     </motion.div>
   );
 }
