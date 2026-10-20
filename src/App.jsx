@@ -765,85 +765,95 @@ function App() {
           </div>
         </section>
 
-                {/* EXPERIENCE SECTION (REDESIGNED: ROBOTIC TIMELINE) */}
+        {/* EXPERIENCE SECTION (REDESIGNED: SYSTEM LOG / TERMINAL) */}
         <section id="experience" className="mb-32 relative">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Professional Journey</h2>
-            <p className="text-slate-400 font-mono text-sm">&gt; System_Trace: Mapping career deployment...</p>
+            <p className="text-slate-400 font-mono text-sm tracking-widest uppercase">&gt; System_Log: Career_Execution</p>
           </div>
 
-          <div className="max-w-4xl mx-auto relative">
-            {/* Glowing vertical connection line */}
-            <div className="absolute left-[28px] md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-500/0 via-cyan-500/50 to-blue-500/0 md:-translate-x-1/2"></div>
+          <div className="max-w-5xl mx-auto space-y-6">
+            {resume.experience.map((exp, i) => {
+              const isCurrent = i === 0;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="group relative"
+                >
+                  {/* Terminal Window Framework */}
+                  <div className={`relative bg-[#0a0a0f] border ${isCurrent ? 'border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)]' : 'border-white/10 hover:border-cyan-500/30'} rounded-2xl overflow-hidden transition-all duration-500 backdrop-blur-xl`}>
 
-            <div className="space-y-12">
-              {resume.experience.map((exp, i) => {
-                const isCurrent = i === 0; // Assuming the first item is your current job
-                return (
-                  <motion.div 
-                    key={i} 
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6, delay: i * 0.1 }}
-                    className={`relative flex flex-col md:flex-row gap-6 md:gap-12 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
-                  >
-                    {/* The Node/Ping on the timeline */}
-                    <div className="absolute left-[16px] md:left-1/2 top-8 md:top-1/2 w-6 h-6 md:-translate-x-1/2 md:-translate-y-1/2 flex items-center justify-center z-10">
-                      {isCurrent && (
-                        <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75 animate-ping"></span>
-                      )}
-                      <span className={`relative inline-flex rounded-full h-4 w-4 border-2 ${isCurrent ? 'bg-cyan-400 border-cyan-200 shadow-[0_0_15px_rgba(6,182,212,1)]' : 'bg-[#050508] border-slate-500'}`}></span>
-                    </div>
-
-                    {/* Empty space for the other side of the timeline on desktop */}
-                    <div className="hidden md:block w-1/2"></div>
-
-                    {/* The Job Card */}
-                    <div className="w-full md:w-1/2 pl-14 md:pl-0">
-                      <div className="group relative bg-[#0c0c14]/80 backdrop-blur-md border border-white/10 p-6 md:p-8 rounded-3xl hover:border-cyan-500/50 transition-all duration-500 overflow-hidden hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(6,182,212,0.15)]">
-                        
-                        {/* Robotic scanning line effect on hover */}
-                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[scan_1.5s_ease-in-out_infinite]"></div>
-                        
-                        {/* Background technical watermark */}
-                        <div className="absolute -bottom-4 -right-2 text-6xl font-black text-white/[0.03] select-none pointer-events-none group-hover:text-cyan-400/[0.05] transition-colors duration-500">
-                          0{i + 1}
+                    {/* Terminal Header Bar */}
+                    <div className="bg-white/[0.03] border-b border-white/10 px-4 py-3 flex items-center justify-between relative z-10">
+                      <div className="flex items-center gap-4">
+                        {/* Mac-style window dots */}
+                        <div className="flex gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                          <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 relative z-10 gap-4">
-                          <div>
-                            <h4 className="text-xl md:text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">{exp.role}</h4>
-                            <div className="text-base text-cyan-400 font-mono mt-1 flex items-center gap-2">
-                              <span className="text-slate-500">&gt;</span> {exp.company}
-                            </div>
-                          </div>
-                          
-                          {/* Date Badge */}
-                          <div className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border whitespace-nowrap self-start sm:self-auto ${
-                            isCurrent 
-                              ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.2)]' 
-                              : 'bg-white/5 border-white/10 text-slate-400'
-                          }`}>
-                            {isCurrent && <span className="inline-block w-2 h-2 bg-cyan-400 rounded-full mr-2 animate-pulse"></span>}
-                            {exp.startDate} – {exp.endDate}
-                          </div>
+                        {/* The "Command" */}
+                        <div className="font-mono text-xs md:text-sm text-slate-300 flex items-center gap-2">
+                          <span className="text-cyan-400">~/career</span>
+                          <span className="text-slate-600">$</span>
+                          <span className="text-white">cat {exp.company.toLowerCase().replace(/\s+/g, '_')}.log</span>
                         </div>
+                      </div>
 
-                        <ul className="space-y-3 relative z-10">
-                          {exp.bullets.map((bullet, j) => (
-                            <li key={j} className="text-slate-400 leading-relaxed text-sm md:text-base flex items-start group-hover:text-slate-300 transition-colors">
-                              <span className="text-cyan-500 mr-3 mt-1.5 text-[10px] opacity-70 group-hover:opacity-100">◆</span> 
-                              <span>{bullet}</span>
-                            </li>
-                          ))}
-                        </ul>
+                      {/* Status Badge */}
+                      <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-md text-[10px] font-mono tracking-wider uppercase border ${isCurrent ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' : 'bg-white/5 border-white/10 text-slate-500'}`}>
+                        {isCurrent ? (
+                          <><span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping"></span> Active</>
+                        ) : (
+                          <><span className="w-1.5 h-1.5 bg-slate-500 rounded-full"></span> Archived</>
+                        )}
                       </div>
                     </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+
+                    {/* Terminal Content Body */}
+                    <div className="p-6 md:p-8 relative">
+                      {/* Subtle background glow */}
+                      <div className={`absolute top-0 right-0 w-64 h-64 blur-[100px] pointer-events-none ${isCurrent ? 'bg-cyan-500/10' : 'bg-blue-500/5 group-hover:bg-cyan-500/10'} transition-all duration-700`}></div>
+
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 relative z-10 gap-4">
+                        <div>
+                          <h4 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                            <span className="text-cyan-500 mr-2 font-mono">#</span>
+                            {exp.role}
+                          </h4>
+                          <div className="text-slate-400 font-mono mt-2 flex items-center gap-3 text-sm">
+                            <span className="text-blue-400">@ {exp.company}</span>
+                            <span className="hidden sm:inline text-slate-600">|</span>
+                            <span className="px-2 py-0.5 bg-white/5 rounded border border-white/5">{exp.startDate} – {exp.endDate}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bullet points as terminal output */}
+                      <div className="space-y-3 relative z-10 border-l-2 border-cyan-500/20 pl-4 md:pl-6 ml-2">
+                        {exp.bullets.map((bullet, j) => (
+                          <motion.div
+                            key={j}
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ delay: 0.3 + (j * 0.1) }}
+                            className="text-slate-300 leading-relaxed text-sm md:text-base flex items-start group-hover:text-white transition-colors duration-300"
+                          >
+                            <span className="text-cyan-500 mr-3 font-mono text-xs mt-1 opacity-70 group-hover:opacity-100">[{String(j + 1).padStart(2, '0')}]</span>
+                            <span>{bullet}</span>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 
