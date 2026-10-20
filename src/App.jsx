@@ -250,7 +250,6 @@ function AboutScreen({ resume, onClose }) {
                   {/* 👇 THIS IS THE BUTTON YOU WERE LOOKING FOR 👇 */}
                   <a
                     href={downloadUrl}
-                    target="_blank"
                     rel="noreferrer"
                     download="Susanta_Resume.pdf"
                     onClick={() => setShowDownloadPopup(false)}
