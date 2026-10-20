@@ -11,6 +11,21 @@ import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
 import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch } from 'lucide-react';
 
+// Simple typing effect for the profile
+function TypewriterText({ text }) {
+  const [displayText, setDisplayText] = useState('');
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      setDisplayText((prev) => text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) clearInterval(timer);
+    }, 15);
+    return () => clearInterval(timer);
+  }, [text]);
+  return <span>{displayText}</span>;
+}
+
 // --- 0. The 3D Tech Badge Component ---
 function TechBadge({ label }) {
   return (
@@ -225,6 +240,8 @@ function AboutScreen({ resume, onClose }) {
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+
+      {/* Modal Header */}
       <div className="sticky top-0 w-full bg-[#050508]/90 backdrop-blur-xl border-b border-cyan-500/30 z-50 flex items-center justify-between px-6 py-4 shadow-[0_10px_30px_rgba(6,182,212,0.1)]">
         <div className="flex items-center gap-3"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div><h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase font-mono">Sys.Profile <span className="text-cyan-400">// Susanta_Nayak</span></h2></div>
         <button type="button" onClick={onClose} className="bg-white/5 hover:bg-cyan-500/20 text-white px-6 py-2 rounded-lg font-mono text-sm transition border border-white/10 hover:border-cyan-500 flex items-center gap-2"><X className="w-4 h-4" />[ESC] CLOSE</button>
@@ -232,47 +249,89 @@ function AboutScreen({ resume, onClose }) {
 
       <div className="max-w-6xl mx-auto p-6 py-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col gap-6">
 
-            <div className="relative bg-[#08080c] border border-cyan-500/30 rounded-2xl overflow-hidden group shadow-[0_0_40px_rgba(6,182,212,0.1)]">
-              <div className="bg-cyan-900/20 border-b border-cyan-500/30 px-6 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-3"><Terminal className="w-5 h-5 text-cyan-400" /><h3 className="text-cyan-400 font-mono font-bold tracking-widest text-sm uppercase">Profile_Summary.exe</h3></div>
-                <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-cyan-500/50 animate-pulse"></div><div className="w-2.5 h-2.5 rounded-full bg-cyan-500/30"></div><div className="w-2.5 h-2.5 rounded-full bg-cyan-500/10"></div></div>
+          {/* LEFT COLUMN: Profile Summary */}
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col h-full">
+
+            <div className="relative bg-[#050508] border border-cyan-500/40 rounded-2xl overflow-hidden group shadow-[0_0_50px_rgba(6,182,212,0.15)] flex flex-col flex-grow">
+
+              {/* Animated Top Scan Line */}
+              <motion.div animate={{ top: ['0%', '100%', '0%'] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] z-20 opacity-50" />
+
+              {/* Terminal Header WITH INTEGRATED DOWNLOAD BUTTON */}
+              <div className="bg-[#0a0a0f] border-b border-cyan-500/30 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
+                <div className="flex items-center gap-3">
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
+                    <Cpu className="w-5 h-5 text-cyan-400" />
+                  </motion.div>
+                  <h3 className="text-cyan-400 font-mono font-bold tracking-widest text-sm uppercase">Profile_Summary.exe</h3>
+                </div>
+
+                {/* The Download Button (Now inside the header) */}
+                <button
+                  onClick={handleDownloadClick}
+                  className="w-full sm:w-auto bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:border-cyan-400 px-4 py-2 rounded-lg font-mono text-[10px] md:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] group/btn"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  [ DOWNLOAD_PDF ]
+                  <svg className="w-3.5 h-3.5 group-hover/btn:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                </button>
               </div>
-              <div className="p-6 md:p-8 relative">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
-                <div className="space-y-6 relative z-10 font-sans">
-                  <p className="text-slate-300 leading-relaxed text-sm md:text-base">I am a results-driven <strong className="text-white">Software Engineer</strong> with over 2 years of experience specializing in building robust, scalable, and user-centric web applications. My expertise sits at the intersection of <strong className="text-cyan-400">Frontend Engineering (React/Next.js)</strong> and <strong className="text-cyan-400">L2/L3 Production Support</strong>.</p>
-                  <div className="relative bg-[#050508] border border-white/5 p-5 rounded-xl overflow-hidden">
+
+              <div className="p-6 md:p-8 relative flex-grow">
+                {/* Background Moving Grid */}
+                <motion.div animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50" />
+
+                <div className="space-y-5 relative z-10 font-sans">
+
+                  {/* 1. Core Intro */}
+                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-slate-300 leading-relaxed text-sm md:text-base">
+                    I am a results-driven <strong className="text-white">Software Engineer</strong> with over 2 years of experience specializing in building robust, scalable, and user-centric web applications. My expertise sits at the intersection of <strong className="text-cyan-400">Frontend Engineering</strong> and <strong className="text-cyan-400">L2/L3 Production Support</strong>.
+                  </motion.p>
+
+                  {/* 2. Current Deployment */}
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="relative bg-[#0a0a0f] border border-white/10 p-4 md:p-5 rounded-xl overflow-hidden group/block hover:border-cyan-500/50 transition-colors">
                     <div className="absolute left-0 top-0 w-1 h-full bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.8)]"></div>
                     <h4 className="text-cyan-400 font-mono text-xs mb-2 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping"></span> CURRENT_DEPLOYMENT</h4>
-                    <p className="text-slate-300 leading-relaxed text-sm md:text-base">Currently at <strong className="text-white">Razorpay (via iEnergizer)</strong>, I debug complex payment gateway integrations, analyze webhooks, and perform Root Cause Analysis (RCA) for enterprise merchants.</p>
-                  </div>
-                  <p className="text-slate-300 leading-relaxed text-sm md:text-base">Whether it's developing a full-stack MERN application, integrating secure payment gateways, or debugging a critical production issue at 2 AM, I approach every challenge with a strict problem-solving mindset. I actively leverage <strong className="text-purple-400">AI-assisted development</strong> to accelerate debugging, analyze root causes, and write cleaner code.</p>
+                    <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                      Currently at <strong className="text-white">Razorpay (via iEnergizer)</strong>, I debug complex payment gateway integrations, analyze webhooks, and perform Root Cause Analysis (RCA) for enterprise merchants, consistently hitting 100% SLA targets.
+                    </p>
+                  </motion.div>
+
+                  {/* 3. AI Workflow */}
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="relative bg-purple-900/10 border border-purple-500/20 p-4 md:p-5 rounded-xl overflow-hidden group/block hover:border-purple-500/50 transition-colors">
+                    <div className="absolute left-0 top-0 w-1 h-full bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.8)]"></div>
+                    <h4 className="text-purple-400 font-mono text-xs mb-2 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-ping"></span> AI_ACCELERATED_WORKFLOW</h4>
+                    <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                      I leverage <strong className="text-purple-300">AI-assisted development (LLMs, Copilot)</strong> to accelerate debugging, analyze root causes, and write cleaner, production-ready code. This allows me to turn critical 2 AM incidents into quick resolutions and ship features 35% faster.
+                    </p>
+                  </motion.div>
+
+                  {/* 4. Background & Education */}
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }} className="relative bg-white/[0.03] border border-white/10 p-4 md:p-5 rounded-xl overflow-hidden group/block hover:border-white/30 transition-colors">
+                    <div className="absolute left-0 top-0 w-1 h-full bg-slate-500"></div>
+                    <h4 className="text-slate-400 font-mono text-xs mb-2 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span> ACADEMIC_&_CERTIFICATIONS</h4>
+                    <ul className="text-slate-300 leading-relaxed text-sm md:text-base list-disc list-inside space-y-1">
+                      <li>Full Stack UI Development Certification — <strong className="text-white">Naresh IT</strong></li>
+                      <li>B.Sc. Chemistry — <strong className="text-white">Utkal University</strong> (Self-taught Full Stack Engineer)</li>
+                    </ul>
+                  </motion.div>
+
                 </div>
               </div>
             </div>
 
-            <div className="relative bg-gradient-to-r from-[#0a0a0f] to-[#0c0c14] border border-white/10 p-6 md:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-[40px] group-hover:bg-cyan-500/20 transition-all"></div>
-              <div className="relative z-10">
-                <h3 className="text-xl font-bold text-white mb-1 font-mono flex items-center gap-2"><Database className="w-5 h-5 text-cyan-400" /> Data_Extraction</h3>
-                <p className="text-slate-400 text-sm">Initialize download sequence for the full PDF.</p>
-              </div>
-              <button type="button" onClick={handleDownloadClick} className="relative z-10 w-full sm:w-auto bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:border-cyan-400 px-6 py-3 rounded-lg font-mono text-sm font-bold transition-all duration-300 flex items-center justify-center gap-3 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] group/btn">
-                <span className="opacity-50 group-hover/btn:opacity-100 transition-opacity">&gt;</span> [ EXECUTE_DOWNLOAD ]
-                <svg className="w-4 h-4 group-hover/btn:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              </button>
-            </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="lg:col-span-5 space-y-8">
+          {/* RIGHT COLUMN: Robot & Metrics */}
+          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="lg:col-span-5 flex flex-col gap-6">
             <div className="relative h-[220px] w-full rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-2xl shadow-[0_0_30px_rgba(6,182,212,0.1)] flex items-center justify-center group">
               <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent"></div>
               <div className="w-full h-full cursor-crosshair relative z-10"><Canvas camera={{ position: [0, 0, 3.5], fov: 45 }}><ambientLight intensity={1.5} /><directionalLight position={[10, 10, 5]} intensity={3} color="#06b6d4" /><directionalLight position={[-10, -10, -5]} intensity={1.5} color="#3b82f6" /><Suspense fallback={null}><RobotAssistant /></Suspense></Canvas></div>
               <div className="absolute bottom-3 text-[10px] font-mono text-cyan-400/50 tracking-widest uppercase group-hover:text-cyan-400 transition-colors">[ Interactive AI Assistant Active ]</div>
             </div>
-            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-3xl backdrop-blur-2xl hover:border-cyan-500/30 transition">
+
+            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-3xl backdrop-blur-2xl hover:border-cyan-500/30 transition flex-grow">
               <h3 className="text-lg font-bold text-white mb-6 font-mono text-cyan-400">&gt; System_Metrics</h3>
               <div className="grid grid-cols-2 gap-4">
                 {[{ value: "2+", label: "Years Exp" }, { value: "500+", label: "Users Supported" }, { value: "L2/L3", label: "Prod Support" }, { value: "100%", label: "SLA Met" }].map((stat, i) => (
@@ -284,6 +343,7 @@ function AboutScreen({ resume, onClose }) {
         </div>
       </div>
 
+      {/* DOWNLOAD MODAL (Remains untouched) */}
       <AnimatePresence>
         {showDownloadPopup && (
           <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.9 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="fixed z-[300] w-[calc(100%-2rem)] sm:w-96 bottom-6 right-6 bg-[#0a0a0f]/95 backdrop-blur-2xl border border-cyan-500/50 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.3)] overflow-hidden">
@@ -868,6 +928,37 @@ function App() {
                   <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/5 blur-[60px] group-hover:bg-cyan-500/10 transition-all duration-700 pointer-events-none"></div>
                   <div className="flex items-center justify-between mb-8 relative z-10 border-b border-white/5 pb-4"><div className="flex items-center gap-3"><div className="w-2 h-6 bg-cyan-500 rounded-sm shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div><h4 className="text-xl font-bold text-white capitalize font-mono tracking-tight">{category}</h4></div><div className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span><span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20 backdrop-blur-md">{skills.length} MODULES</span></div></div>
                   <div className="flex flex-wrap gap-3 relative z-10">
+                    {/* Inject Missing Skills from Resume */}
+                    {lowerCat.includes('lang') && (
+                      <>
+                        {["C#", ".NET (Beginner)"].map((lang, i) => (
+                          <motion.div key={`lang-${i}`} whileHover={{ scale: 1.05, y: -2 }} className="relative px-4 py-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden">
+                            <div className="w-1.5 h-1.5 bg-slate-400 rounded-sm"></div>
+                            <span className="text-sm font-medium text-slate-300 font-mono">{lang}</span>
+                          </motion.div>
+                        ))}
+                      </>
+                    )}
+                    {lowerCat.includes('back') && (
+                      <>
+                        {["Node.js", "MongoDB", "SQL"].map((back, i) => (
+                          <motion.div key={`back-${i}`} whileHover={{ scale: 1.05, y: -2 }} className="relative px-4 py-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden">
+                            <div className="w-1.5 h-1.5 bg-slate-400 rounded-sm"></div>
+                            <span className="text-sm font-medium text-slate-300 font-mono">{back}</span>
+                          </motion.div>
+                        ))}
+                      </>
+                    )}
+                    {lowerCat.includes('front') && (
+                      <>
+                        {["React.js"].map((front, i) => (
+                          <motion.div key={`front-${i}`} whileHover={{ scale: 1.05, y: -2 }} className="relative px-4 py-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden">
+                            <div className="w-1.5 h-1.5 bg-slate-400 rounded-sm"></div>
+                            <span className="text-sm font-medium text-slate-300 font-mono">{front}</span>
+                          </motion.div>
+                        ))}
+                      </>
+                    )}
                     {skills.map((skill, i) => (
                       <motion.div key={i} whileHover={{ scale: 1.05, y: -2 }} className="relative px-4 py-2 bg-[#050508]/80 backdrop-blur-sm border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/15 to-cyan-500/0 translate-x-[-100%] group-hover/skill:translate-x-[100%] transition-transform duration-1000"></div>
@@ -875,7 +966,7 @@ function App() {
                         <span className="text-sm font-medium text-slate-300 group-hover/skill:text-white transition-colors z-10 font-mono">{skill}</span>
                       </motion.div>
                     ))}
-                    {(lowerCat.includes('tool') || lowerCat.includes('lang') || lowerCat.includes('back')) && (
+                    {lowerCat.includes('tool') && (
                       <>
                         {["OpenAI API", "Prompt Engineering", "LLM Integration", "RAG Pipelines"].map((aiSkill, i) => (
                           <motion.div key={`ai-${i}`} whileHover={{ scale: 1.05, y: -2 }} className="relative px-4 py-2 bg-purple-500/10 backdrop-blur-sm border border-purple-500/40 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden shadow-[0_0_10px_rgba(168,85,247,0.15)]">
