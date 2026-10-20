@@ -259,10 +259,10 @@ function AboutScreen({ resume, onClose }) {
                   <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div>
                   <h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4>
                   <p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p>
-                  
-                  <a 
-                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`} 
-                    onClick={() => setShowDownloadPopup(false)} 
+
+                  <a
+                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`}
+                    onClick={() => setShowDownloadPopup(false)}
                     className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
                   >
                     Open the Secret
@@ -314,9 +314,9 @@ function StatCounter({ end, suffix = "", label }) {
   useEffect(() => {
     if (inView) {
       let start = 0;
-      const duration = 2000; 
+      const duration = 2000;
       const increment = end / (duration / 16);
-      
+
       const timer = setInterval(() => {
         start += increment;
         if (start >= end) {
@@ -368,18 +368,18 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
           <div className="flex gap-3">
             {liveUrl && (
               <a href={liveUrl} target="_blank" rel="noreferrer"
-                 className="text-slate-400 hover:text-cyan-400 transition" title="Live">
+                className="text-slate-400 hover:text-cyan-400 transition" title="Live">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
             )}
             {repoUrl && (
               <a href={repoUrl} target="_blank" rel="noreferrer"
-                 className="text-slate-400 hover:text-cyan-400 transition" title="Repo">
+                className="text-slate-400 hover:text-cyan-400 transition" title="Repo">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                 </svg>
               </a>
             )}
@@ -740,7 +740,7 @@ function App() {
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 relative z-10">Want to see more like this?</h3>
             <p className="text-slate-400 mb-8 max-w-2xl mx-auto relative z-10">I have built several other full-stack applications, tools, and experiments. Explore my complete collection of repositories on GitHub.</p>
             <a href="https://github.com/Susantanayak1999" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-bold transition shadow-[0_0_30px_rgba(6,182,212,0.4)] relative z-10 hover:scale-105">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
               View All Projects on GitHub
             </a>
           </div>
@@ -805,8 +805,8 @@ function App() {
               const detailedBullets = exp.detailedBullets || exp.bullets || [];
 
               return (
-                <motion.div 
-                  key={i} 
+                <motion.div
+                  key={i}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
@@ -814,7 +814,7 @@ function App() {
                   className="group relative"
                 >
                   <div className={`relative bg-[#0a0a0f] border ${isCurrent ? 'border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)]' : 'border-white/10 hover:border-cyan-500/30'} rounded-2xl overflow-hidden transition-all duration-500 backdrop-blur-xl`}>
-                    
+
                     {/* Terminal Header Bar */}
                     <div className="bg-white/[0.03] border-b border-white/10 px-3 md:px-4 py-3 flex flex-wrap items-center justify-between gap-2 relative z-10">
                       <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
@@ -823,7 +823,7 @@ function App() {
                           <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
                           <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
                         </div>
-                        
+
                         <div className="font-mono text-[10px] md:text-sm text-slate-300 flex items-center gap-1 md:gap-2 break-all">
                           <span className="text-cyan-400 shrink-0">~/career</span>
                           <span className="text-slate-600 shrink-0">$</span>
@@ -861,14 +861,14 @@ function App() {
                       {/* Short Bullet Points (Max 3) */}
                       <div className="space-y-3 relative z-10 border-l-2 border-cyan-500/20 pl-3 md:pl-6 ml-1 md:ml-2">
                         {displayBullets.slice(0, 3).map((bullet, j) => (
-                          <motion.div 
-                            key={j} 
+                          <motion.div
+                            key={j}
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ delay: 0.3 + (j * 0.1) }}
                             className="text-slate-300 leading-relaxed text-xs md:text-base flex items-start group-hover:text-white transition-colors duration-300 break-words"
                           >
-                            <span className="text-cyan-500 mr-2 md:mr-3 font-mono text-[10px] md:text-xs mt-1 opacity-70 group-hover:opacity-100 shrink-0">[{String(j+1).padStart(2, '0')}]</span> 
+                            <span className="text-cyan-500 mr-2 md:mr-3 font-mono text-[10px] md:text-xs mt-1 opacity-70 group-hover:opacity-100 shrink-0">[{String(j + 1).padStart(2, '0')}]</span>
                             <span className="w-full">{bullet}</span>
                           </motion.div>
                         ))}
@@ -876,7 +876,7 @@ function App() {
 
                       {/* Read More Button */}
                       <div className="mt-6 relative z-10">
-                        <button 
+                        <button
                           onClick={() => setSelectedExperience({ ...exp, detailedBullets })}
                           className="text-cyan-400 font-mono text-xs md:text-sm hover:text-cyan-300 transition flex items-center gap-2 group/btn"
                         >
@@ -893,26 +893,67 @@ function App() {
           </div>
         </section>
 
-        {/* SKILLS SECTION */}
-        <section id="skills" className="mb-32">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Technical Arsenal</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {Object.entries(resume.skills || {}).map(([category, skills]) => (
-              <div key={category} className="bg-white/[0.03] border border-white/10 p-6 rounded-3xl backdrop-blur-md hover:border-cyan-500/30 transition group">
-                <div className="flex items-center justify-between mb-5">
-                  <h4 className="text-lg font-bold text-white capitalize font-mono">&gt; {category}</h4>
-                  <span className="text-[10px] font-mono text-cyan-400/60">{skills.length} skills</span>
+        {/* SKILLS SECTION (REDESIGNED: CYBERPUNK CORE) */}
+        <section id="skills" className="mb-32 relative">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Technical Arsenal</h2>
+            <p className="text-slate-400 font-mono text-sm tracking-widest uppercase">&gt; Sys.Dump: Skill_Modules_Loaded</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Object.entries(resume.skills || {}).map(([category, skills], idx) => (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="group relative bg-[#0a0a0f] border border-white/10 rounded-2xl p-6 md:p-8 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500 overflow-hidden"
+              >
+                {/* Background animated glow */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/5 blur-[60px] group-hover:bg-cyan-500/20 transition-all duration-700 pointer-events-none"></div>
+
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8 relative z-10 border-b border-white/5 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-6 bg-cyan-500 rounded-sm shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
+                    <h4 className="text-xl font-bold text-white capitalize font-mono tracking-tight">
+                      {category}
+                    </h4>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                    <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">
+                      {skills.length} MODULES
+                    </span>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+
+                {/* Skill Pills Grid */}
+                <div className="flex flex-wrap gap-3 relative z-10">
                   {skills.map((skill, i) => (
-                    <div key={i}
-                      className="flex items-center gap-2 bg-[#050508] px-3 py-2 rounded-lg border border-white/5 hover:border-cyan-500/60 hover:bg-cyan-500/5 transition cursor-default group/skill">
-                      <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full group-hover/skill:shadow-[0_0_8px_rgba(6,182,212,0.8)] transition" />
-                      <span className="text-sm text-slate-300 font-medium">{skill}</span>
-                    </div>
+                    <motion.div
+                      key={i}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      className="relative px-4 py-2 bg-[#050508] border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden"
+                    >
+                      {/* Hover sliding glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 translate-x-[-100%] group-hover/skill:translate-x-[100%] transition-transform duration-1000"></div>
+
+                      {/* Square bullet */}
+                      <div className="w-1.5 h-1.5 bg-slate-600 group-hover/skill:bg-cyan-400 group-hover/skill:shadow-[0_0_8px_rgba(6,182,212,1)] transition-all rounded-sm"></div>
+
+                      <span className="text-sm font-medium text-slate-300 group-hover/skill:text-white transition-colors z-10 font-mono">
+                        {skill}
+                      </span>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+
+                {/* Decorative corner brackets */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -936,13 +977,13 @@ function App() {
       {/* EXPERIENCE MODAL (POPUP) */}
       <AnimatePresence>
         {selectedExperience && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-[#050508]/80 backdrop-blur-md"
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
@@ -957,7 +998,7 @@ function App() {
                   </h3>
                   <p className="text-cyan-400 font-mono text-sm">@ {selectedExperience.company}</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setSelectedExperience(null)}
                   className="p-2 bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition"
                 >
@@ -971,15 +1012,15 @@ function App() {
                   <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">Duration:</span>
                   <span className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs rounded-full font-mono">{selectedExperience.startDate} – {selectedExperience.endDate}</span>
                 </div>
-                
+
                 {selectedExperience.detailedBullets.map((bullet, j) => (
                   <div key={j} className="text-slate-300 leading-relaxed text-sm md:text-base flex items-start">
-                    <span className="text-cyan-500 mr-3 font-mono text-xs mt-1 opacity-70">[{String(j+1).padStart(2, '0')}]</span> 
+                    <span className="text-cyan-500 mr-3 font-mono text-xs mt-1 opacity-70">[{String(j + 1).padStart(2, '0')}]</span>
                     <span>{bullet}</span>
                   </div>
                 ))}
               </div>
-              
+
               {/* Modal Footer */}
               <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center">
                 <button onClick={() => setSelectedExperience(null)} className="text-xs font-mono text-slate-500 hover:text-white transition">
@@ -1001,7 +1042,7 @@ function App() {
         aria-label="Download Resume"
       >
         <svg className="w-6 h-6 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
         <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0a0a0f] border border-cyan-500/30 text-cyan-400 text-xs font-mono px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
           Download_Resume.pdf
