@@ -7,7 +7,7 @@ import { EffectComposer, Bloom, ChromaticAberration, Vignette } from '@react-thr
 import { BlendFunction } from 'postprocessing';
 import gsap from 'gsap';
 import { io } from 'socket.io-client';
-import Tilt from 'react-tilt';
+import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
 import { X } from 'lucide-react';
 
