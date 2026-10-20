@@ -88,12 +88,12 @@ export default function Admin() {
   const addEducation = () => setResume({ ...resume, education: [...resume.education, { degree: '', institution: '', year: '' }] });
   const removeEducation = (i) => setResume({ ...resume, education: resume.education.filter((_, idx) => idx !== i) });
 
-  // NEW: Certifications
+  // Certifications
   const updateCert = (i, f, v) => { const c = [...(resume.certifications || [])]; c[i][f] = v; setResume({ ...resume, certifications: c }); };
   const addCert = () => setResume({ ...resume, certifications: [...(resume.certifications || []), { title: '', org: '', icon: '🏆' }] });
   const removeCert = (i) => setResume({ ...resume, certifications: (resume.certifications || []).filter((_, idx) => idx !== i) });
 
-  // NEW: Currently Building
+  // Currently Building
   const updateBuilding = (i, f, v) => { const b = [...(resume.currentlyBuilding || [])]; b[i][f] = v; setResume({ ...resume, currentlyBuilding: b }); };
   const addBuilding = () => setResume({ ...resume, currentlyBuilding: [...(resume.currentlyBuilding || []), { label: '', value: '', icon: '⚡' }] });
   const removeBuilding = (i) => setResume({ ...resume, currentlyBuilding: (resume.currentlyBuilding || []).filter((_, idx) => idx !== i) });
@@ -128,7 +128,7 @@ export default function Admin() {
         {/* HERO SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-cyan-400"></div>
-          <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-cyan-400">&gt;</span> Hero Section</h2>
+          <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-cyan-400">&gt;</span> Hero & Contact Details</h2>
           <div className="space-y-5">
             <div>
               <label className="block text-xs font-mono text-slate-400 mb-2">NAME</label>
@@ -141,6 +141,26 @@ export default function Admin() {
             <div>
               <label className="block text-xs font-mono text-slate-400 mb-2">SUMMARY</label>
               <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl h-28 outline-none focus:border-cyan-500 transition-colors" />
+            </div>
+
+            {/* NEW CONTACT DETAILS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-white/10 pt-5 mt-5">
+              <div>
+                <label className="block text-xs font-mono text-slate-400 mb-2">EMAIL ADDRESS</label>
+                <input value={resume.hero.email || ''} onChange={e => updateHero('email', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="hello@example.com" />
+              </div>
+              <div>
+                <label className="block text-xs font-mono text-slate-400 mb-2">PHONE NUMBER</label>
+                <input value={resume.hero.phone || ''} onChange={e => updateHero('phone', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="+919348001084" />
+              </div>
+              <div>
+                <label className="block text-xs font-mono text-slate-400 mb-2">LINKEDIN URL</label>
+                <input value={resume.hero.linkedin || ''} onChange={e => updateHero('linkedin', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="https://linkedin.com/in/..." />
+              </div>
+              <div>
+                <label className="block text-xs font-mono text-slate-400 mb-2">GITHUB URL</label>
+                <input value={resume.hero.github || ''} onChange={e => updateHero('github', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors" placeholder="https://github.com/..." />
+              </div>
             </div>
             
             <div className="border-t border-white/10 pt-5 mt-5">
@@ -179,7 +199,6 @@ export default function Admin() {
                 />
               </div>
               
-              {/* PDF Status Display */}
               {resume.hero.pdfUrl ? (
                 <div className="mt-3 flex items-center justify-between bg-green-500/10 border border-green-500/20 p-3 rounded-lg">
                   <p className="text-xs text-green-400 font-mono flex items-center gap-2">
@@ -187,16 +206,19 @@ export default function Admin() {
                     PDF Attached Successfully
                   </p>
                   <div className="flex gap-4">
-                    <a 
-                      href={resume.hero.pdfUrl} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="text-xs text-green-300 underline hover:text-white transition"
-                    >
-                      View Current PDF
-                    </a>
+                    <a href={resume.hero.pdfUrl} target="_blank" rel="noreferrer" className="text-xs text-green-300 underline hover:text-white transition">View Current PDF</a>
                     <button 
-                      onClick={() => updateHero('pdfUrl', '')}
+                      onClick={async () => {
+                        updateHero('pdfUrl', '');
+                        setStatus('Removing PDF...');
+                        try {
+                          await client.put('/admin/resume', { ...resume, hero: { ...resume.hero, pdfUrl: '' } });
+                          setStatus('✅ PDF Removed permanently!');
+                          setTimeout(() => setStatus(''), 3000);
+                        } catch (err) {
+                          setStatus('❌ Error removing PDF');
+                        }
+                      }}
                       className="text-xs text-red-400 underline hover:text-red-300 transition"
                     >
                       Remove

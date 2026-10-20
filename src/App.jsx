@@ -11,11 +11,11 @@ import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
 import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch, Phone, Mail } from 'lucide-react';
 
-// --- 1. The Interactive Contact HUD ---
+// --- 1. The Interactive Contact HUD (For Navbar) ---
 function ContactHUD({ resume, isOpen, onClose }) {
   if (!isOpen) return null;
   return (
-    <motion.div
+    <motion.div 
       initial={{ opacity: 0, y: -20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -26,24 +26,21 @@ function ContactHUD({ resume, isOpen, onClose }) {
         <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider">Initiate_Contact</span>
         <button onClick={onClose} className="text-slate-400 hover:text-white transition"><X className="w-4 h-4" /></button>
       </div>
-
+      
       <div className="p-2">
-        <a href={`mailto:${resume.hero.email}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+        <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
           <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
             <Mail className="w-4 h-4" />
           </div>
           <div>
             <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Email Direct</div>
-            <div className="text-[10px] text-slate-400 font-mono truncate w-48">{resume.hero.email}</div>
+            <div className="text-[10px] text-slate-400 font-mono truncate w-48">{resume.hero.email || 'iamsusantanayak99@gmail.com'}</div>
           </div>
         </a>
 
-        <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+        <a href={resume.hero.linkedin || '#'} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
           <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
-            {/* REPLACED LUCIDE ICON WITH NATIVE SVG */}
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-            </svg>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
           </div>
           <div>
             <div className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">LinkedIn Network</div>
@@ -53,13 +50,13 @@ function ContactHUD({ resume, isOpen, onClose }) {
 
         <div className="h-px bg-white/10 my-2 mx-3"></div>
 
-        <a href={`tel:+919348001084`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+        <a href={`tel:${resume.hero.phone || '+919348001084'}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
           <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
             <Phone className="w-4 h-4" />
           </div>
           <div>
             <div className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Direct Line</div>
-            <div className="text-[10px] text-slate-400 font-mono">+91-9348001084</div>
+            <div className="text-[10px] text-slate-400 font-mono">{resume.hero.phone || '+91-9348001084'}</div>
           </div>
         </a>
       </div>
@@ -67,7 +64,72 @@ function ContactHUD({ resume, isOpen, onClose }) {
   );
 }
 
-// --- 2. The 3D Tech Badge ---
+// --- 2. The Full Screen Contact Modal (For Hero Button) ---
+function ContactModal({ resume, onClose }) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
+      className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-[#050508]/80 backdrop-blur-md"
+    >
+      <motion.div 
+        initial={{ scale: 0.95, y: 20 }} 
+        animate={{ scale: 1, y: 0 }} 
+        exit={{ scale: 0.95, y: 20 }} 
+        className="bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl w-full max-w-md shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden relative"
+      >
+        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+          <div className="flex items-center gap-3">
+            <Terminal className="w-5 h-5 text-cyan-400" />
+            <h3 className="text-lg font-bold text-white font-mono tracking-wider uppercase">Initiate_Contact</h3>
+          </div>
+          <button onClick={onClose} className="p-2 bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <div className="p-6 space-y-3">
+          <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition group">
+            <div className="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Email Direct</div>
+              <div className="text-xs text-slate-400 font-mono">{resume.hero.email || 'iamsusantanayak99@gmail.com'}</div>
+            </div>
+          </a>
+
+          <a href={resume.hero.linkedin || '#'} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition group">
+            <div className="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">LinkedIn Network</div>
+              <div className="text-xs text-slate-400 font-mono">Connect & Message</div>
+            </div>
+          </a>
+
+          <a href={`tel:${resume.hero.phone || '+919348001084'}`} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-white/10 transition group">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
+              <Phone className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Direct Line</div>
+              <div className="text-xs text-slate-400 font-mono">{resume.hero.phone || '+91-9348001084'}</div>
+            </div>
+          </a>
+        </div>
+        
+        <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center">
+          <button onClick={onClose} className="text-xs font-mono text-slate-500 hover:text-white transition">[ CLOSE_WINDOW ]</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// --- 3. The 3D Tech Badge ---
 function TechBadge({ label }) {
   return (
     <motion.div
@@ -84,7 +146,7 @@ function TechBadge({ label }) {
   );
 }
 
-// --- 3. Background Starfield ---
+// --- 4. Background Starfield ---
 function ParticleField() {
   const ref = useRef();
   const [sphere] = useState(() => {
@@ -106,7 +168,7 @@ function ParticleField() {
   );
 }
 
-// --- 4. The Robotic HUD Overlay ---
+// --- 5. The Robotic HUD Overlay ---
 function RoboticHUD() {
   const hudRef = useRef(null);
   useEffect(() => {
@@ -136,7 +198,7 @@ function RoboticHUD() {
   );
 }
 
-// --- 5. The 3D Robot Assistant ---
+// --- 6. The 3D Robot Assistant ---
 function DeveloperCore() {
   const robotRef = useRef();
   const headRef = useRef();
@@ -179,7 +241,7 @@ function DeveloperCore() {
   );
 }
 
-// --- 6. Robot Presenter (Transition Screen) ---
+// --- 7. Robot Presenter (Transition Screen) ---
 function RobotPresenter({ onComplete }) {
   const containerRef = useRef(); const orbRef = useRef(); const textRef = useRef();
   useEffect(() => {
@@ -213,7 +275,7 @@ function RobotPresenter({ onComplete }) {
   );
 }
 
-// --- 7. 3D Robot Assistant (Inside Modal) ---
+// --- 8. 3D Robot Assistant (Inside Modal) ---
 function RobotAssistant() {
   const robotRef = useRef(); const ringRef = useRef();
   useFrame((state) => {
@@ -239,7 +301,7 @@ function RobotAssistant() {
   );
 }
 
-// --- 8. The Full Screen About Overlay ---
+// --- 9. The Full Screen About Overlay ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
@@ -281,18 +343,18 @@ function AboutScreen({ resume, onClose }) {
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-
+      
       <div className="sticky top-0 w-full bg-[#050508]/90 backdrop-blur-xl border-b border-cyan-500/30 z-50 flex items-center justify-between px-6 py-4 shadow-[0_10px_30px_rgba(6,182,212,0.1)]">
-        <div className="flex items-center gap-3"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div><h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase font-mono">Sys.Profile <span className="text-cyan-400">// Susanta_Nayak</span></h2></div>
+        <div className="flex items-center gap-3"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div><h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase font-mono">Sys.Profile <span className="text-cyan-400">// {resume.hero.name || 'Susanta_Nayak'}</span></h2></div>
         <button type="button" onClick={onClose} className="bg-white/5 hover:bg-cyan-500/20 text-white px-6 py-2 rounded-lg font-mono text-sm transition border border-white/10 hover:border-cyan-500 flex items-center gap-2"><X className="w-4 h-4" />[ESC] CLOSE</button>
       </div>
 
       <div className="max-w-6xl mx-auto p-6 py-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
+          
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col">
             <div className="relative bg-[#050508] border border-cyan-500/40 rounded-2xl overflow-hidden group shadow-[0_0_50px_rgba(6,182,212,0.15)] flex flex-col flex-grow">
-
+              
               <motion.div animate={{ top: ['0%', '100%', '0%'] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] z-20 opacity-50" />
 
               <div className="bg-[#0a0a0f] border-b border-cyan-500/30 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
@@ -311,7 +373,7 @@ function AboutScreen({ resume, onClose }) {
 
               <div className="p-6 md:p-8 relative flex-grow">
                 <motion.div animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50" />
-
+                
                 <div className="space-y-5 relative z-10 font-sans">
                   <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-slate-300 leading-relaxed text-sm md:text-base">
                     I am a results-driven <strong className="text-white">Software Engineer</strong> with over 2 years of experience specializing in building robust, scalable, and user-centric web applications. My expertise sits at the intersection of <strong className="text-cyan-400">Frontend Engineering</strong> and <strong className="text-cyan-400">L2/L3 Production Support</strong>.
@@ -352,7 +414,7 @@ function AboutScreen({ resume, onClose }) {
               <div className="w-full h-full cursor-crosshair relative z-10"><Canvas camera={{ position: [0, 0, 3.5], fov: 45 }}><ambientLight intensity={1.5} /><directionalLight position={[10, 10, 5]} intensity={3} color="#06b6d4" /><directionalLight position={[-10, -10, -5]} intensity={1.5} color="#3b82f6" /><Suspense fallback={null}><RobotAssistant /></Suspense></Canvas></div>
               <div className="absolute bottom-3 text-[10px] font-mono text-cyan-400/50 tracking-widest uppercase group-hover:text-cyan-400 transition-colors">[ Interactive AI Assistant Active ]</div>
             </div>
-
+            
             <div className="bg-white/[0.02] border border-white/10 p-8 rounded-3xl backdrop-blur-2xl hover:border-cyan-500/30 transition flex flex-col flex-grow justify-center">
               <h3 className="text-lg font-bold text-white mb-6 font-mono text-cyan-400">&gt; System_Metrics</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -401,14 +463,14 @@ function AboutScreen({ resume, onClose }) {
   );
 }
 
-// --- 9. Custom Cursor ---
+// --- 10. Custom Cursor ---
 function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   useEffect(() => { const updateMousePosition = (e) => setMousePosition({ x: e.clientX, y: e.clientY }); window.addEventListener('mousemove', updateMousePosition); return () => window.removeEventListener('mousemove', updateMousePosition); }, []);
   return <motion.div className="fixed top-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none z-0 hidden md:block" animate={{ x: mousePosition.x - 128, y: mousePosition.y - 128 }} transition={{ type: "tween", ease: "backOut", duration: 0.5 }} />;
 }
 
-// --- 10. Cinematic Overlays ---
+// --- 11. Cinematic Overlays ---
 function CinematicOverlays() {
   return (
     <>
@@ -418,7 +480,7 @@ function CinematicOverlays() {
   );
 }
 
-// --- 11. Animated Stat Counter ---
+// --- 12. Animated Stat Counter ---
 function StatCounter({ end, suffix = "", label }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -458,7 +520,7 @@ function StatCounter({ end, suffix = "", label }) {
   );
 }
 
-// --- 12. BOLD Project Card ---
+// --- 13. BOLD Project Card ---
 function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "bg-gradient-to-br from-cyan-600/30 via-blue-600/20 to-indigo-900/40", status = "live", problem, solution, result }) {
   return (
     <Tilt options={{ max: 12, scale: 1.02, speed: 400, glare: true, "max-glare": 0.3 }} className="h-full">
@@ -491,7 +553,7 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
   );
 }
 
-// --- 13. Auto-Scrolling Architecture Carousel ---
+// --- 14. Auto-Scrolling Architecture Carousel ---
 function ArchitectureCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const architectures = [
@@ -566,74 +628,7 @@ function ArchitectureCarousel() {
   );
 }
 
-// --- 13. The Full Screen Contact Modal (For Hero Button) ---
-function ContactModal({ resume, onClose }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-[#050508]/80 backdrop-blur-md"
-    >
-      <motion.div
-        initial={{ scale: 0.95, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.95, y: 20 }}
-        className="bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl w-full max-w-md shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden relative"
-      >
-        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
-          <div className="flex items-center gap-3">
-            <Terminal className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-lg font-bold text-white font-mono tracking-wider uppercase">Initiate_Contact</h3>
-          </div>
-          <button onClick={onClose} className="p-2 bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-3">
-          <a href={`mailto:${resume.hero.email}`} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition group">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
-              <Mail className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Email Direct</div>
-              <div className="text-xs text-slate-400 font-mono">{resume.hero.email}</div>
-            </div>
-          </a>
-
-          <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition group">
-            <div className="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg>
-            </div>
-            <div>
-              <div className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">LinkedIn Network</div>
-              <div className="text-xs text-slate-400 font-mono">Connect & Message</div>
-            </div>
-          </a>
-
-          <a href={`tel:+919348001084`} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-white/10 transition group">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
-              <Phone className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Direct Line</div>
-              <div className="text-xs text-slate-400 font-mono">+91-9348001084</div>
-            </div>
-          </a>
-        </div>
-
-        <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center">
-          <button onClick={onClose} className="text-xs font-mono text-slate-500 hover:text-white transition">[ CLOSE_WINDOW ]</button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// --- 14. Main App Component ---
+// --- 15. Main App Component ---
 function App() {
   const [resume, setResume] = useState(null);
   const [error, setError] = useState(null);
@@ -671,10 +666,11 @@ function App() {
     const handlePopState = () => {
       if (showAbout) setShowAbout(false);
       if (selectedExperience) setSelectedExperience(null);
+      if (showContactModal) setShowContactModal(false);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [showAbout, selectedExperience]);
+  }, [showAbout, selectedExperience, showContactModal]);
 
   useEffect(() => {
     client.get('/resume').then(res => setResume(res.data)).catch(err => {
@@ -771,6 +767,7 @@ function App() {
 
       <AnimatePresence>{isTransitioning && <RobotPresenter onComplete={handleTransitionComplete} />}</AnimatePresence>
       <AnimatePresence>{showAbout && <AboutScreen resume={resume} onClose={closeAbout} />}</AnimatePresence>
+      <AnimatePresence>{showContactModal && <ContactModal resume={resume} onClose={() => setShowContactModal(false)} />}</AnimatePresence>
 
       <div className="fixed inset-0 z-0 pointer-events-none"><Canvas camera={{ position: [0, 0, 1] }}><ParticleField /></Canvas></div>
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -792,17 +789,16 @@ function App() {
             <a href="#projects" className="hover:text-cyan-400 transition-colors">Work</a>
             <a href="#experience" className="hover:text-cyan-400 transition-colors">Experience</a>
           </div>
-
-          {/* DESKTOP NAV ACTIONS */}
+          
           <div className="flex items-center gap-4 relative contact-wrapper">
-            <button
-              onClick={() => setIsContactOpen(!isContactOpen)}
+            <button 
+              onClick={() => setIsContactOpen(!isContactOpen)} 
               className="hidden md:flex bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-2.5 rounded-full font-semibold transition backdrop-blur-sm items-center gap-2 group"
             >
               Hire Me
               <svg className={`w-4 h-4 transition-transform duration-300 ${isContactOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
-
+            
             <AnimatePresence>
               {isContactOpen && <ContactHUD resume={resume} isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />}
             </AnimatePresence>
@@ -865,23 +861,16 @@ function App() {
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-100 to-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                   <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase">View My Profile<svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg></span>
                 </button>
-
-                <div className="relative w-full sm:w-auto contact-wrapper z-50">
-                  <button
-                    onClick={() => setShowContactModal(true)}
-                    className="group relative w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 text-white font-bold text-sm rounded-xl transition-all duration-300 hover:bg-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] flex items-center justify-center gap-3"
-                  >
-                    <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase">
-                      <span className="w-2 h-2 rounded-full bg-green-400 group-hover:animate-pulse"></span>
-                      Let's Connect
-                    </span>
-                  </button>
-                  <div className="absolute top-full mt-2 left-0 w-full sm:w-auto">
-                    <AnimatePresence>
-                      {isContactOpen && <ContactHUD resume={resume} isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />}
-                    </AnimatePresence>
-                  </div>
-                </div>
+                
+                <button 
+                  onClick={() => setShowContactModal(true)}
+                  className="group relative w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 text-white font-bold text-sm rounded-xl transition-all duration-300 hover:bg-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] flex items-center justify-center gap-3"
+                >
+                  <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase">
+                    <span className="w-2 h-2 rounded-full bg-green-400 group-hover:animate-pulse"></span>
+                    Let's Connect
+                  </span>
+                </button>
               </motion.div>
             </div>
 
@@ -926,11 +915,9 @@ function App() {
               </ul>
             </div>
             <div className="grid grid-cols-2 gap-2 relative z-10 mt-auto">
-              <a href={`mailto:${resume.hero.email}`} className="bg-cyan-500 hover:bg-cyan-400 text-black py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"><Mail className="w-3.5 h-3.5" />EMAIL</a>
-              <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                </svg>
+              <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="bg-cyan-500 hover:bg-cyan-400 text-black py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"><Mail className="w-3.5 h-3.5" />EMAIL</a>
+              <a href={resume.hero.linkedin || '#'} target="_blank" rel="noreferrer" className="bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                 LINKEDIN
               </a>
             </div>
@@ -981,7 +968,7 @@ function App() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] group-hover:bg-cyan-500/20 transition-all"></div>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 relative z-10">Want to see more like this?</h3>
             <p className="text-slate-400 mb-8 max-w-2xl mx-auto relative z-10">I have built several other full-stack applications, tools, and experiments. Explore my complete collection of repositories on GitHub.</p>
-            <a href="https://github.com/Susantanayak1999" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-bold transition shadow-[0_0_30px_rgba(6,182,212,0.4)] relative z-10 hover:scale-105"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>View All Projects on GitHub</a>
+            <a href={resume.hero.github || '#'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-bold transition shadow-[0_0_30px_rgba(6,182,212,0.4)] relative z-10 hover:scale-105"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>View All Projects on GitHub</a>
           </div>
         </section>
 
@@ -1122,11 +1109,11 @@ function App() {
         <section className="border-t border-white/10 pt-16 pb-8 text-center flex flex-col items-center">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">great.</span></h2>
           <p className="text-slate-400 mb-10 max-w-lg text-lg">Currently open for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
-          <a href={`mailto:${resume.hero.email}`} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-10 py-4 rounded-xl font-bold text-lg transition shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-16 inline-block hover:scale-105">Say Hello</a>
+          <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-10 py-4 rounded-xl font-bold text-lg transition shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-16 inline-block hover:scale-105">Say Hello</a>
           <div className="flex gap-8 mb-8">
-            <a href={resume.hero.github} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition font-medium">GitHub</a>
-            <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition font-medium">LinkedIn</a>
-            <a href={`mailto:${resume.hero.email}`} className="text-slate-400 hover:text-white transition font-medium">Email</a>
+            <a href={resume.hero.github || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition font-medium">GitHub</a>
+            <a href={resume.hero.linkedin || '#'} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-white transition font-medium">LinkedIn</a>
+            <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="text-slate-400 hover:text-white transition font-medium">Email</a>
           </div>
           <div className="text-sm text-slate-600">© {new Date().getFullYear()} {resume.hero.name}. Designed & Built from scratch.</div>
         </section>
@@ -1147,13 +1134,6 @@ function App() {
               <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center"><button onClick={() => setSelectedExperience(null)} className="text-xs font-mono text-slate-500 hover:text-white transition">[ CLOSE_WINDOW ]</button></div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-      
-      {/* CONTACT MODAL (For Hero Button) */}
-      <AnimatePresence>
-        {showContactModal && (
-          <ContactModal resume={resume} onClose={() => setShowContactModal(false)} />
         )}
       </AnimatePresence>
 
