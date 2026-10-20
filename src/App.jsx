@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import client from './api/client';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -10,13 +11,12 @@ import { io } from 'socket.io-client';
 import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
 import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch, Phone, Mail, User, CheckCircle } from 'lucide-react';
-//import emailjs from '@emailjs/browser';
 
 // --- 1. The Interactive Contact HUD (For Navbar) ---
 function ContactHUD({ resume, isOpen, onClose }) {
   if (!isOpen) return null;
   return (
-    <motion.div
+    <motion.div 
       initial={{ opacity: 0, y: -20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -27,7 +27,7 @@ function ContactHUD({ resume, isOpen, onClose }) {
         <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider">Initiate_Contact</span>
         <button onClick={onClose} className="text-slate-400 hover:text-white transition"><X className="w-4 h-4" /></button>
       </div>
-
+      
       <div className="p-2">
         <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
           <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
@@ -41,7 +41,7 @@ function ContactHUD({ resume, isOpen, onClose }) {
 
         <a href={resume.hero.linkedin || '#'} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
           <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
           </div>
           <div>
             <div className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">LinkedIn Network</div>
@@ -75,7 +75,7 @@ function ConnectionFormModal({ resume, onClose }) {
     setStatus('sending');
 
     try {
-      // Send data to your Node.js backend (Nodemailer)
+      // Send data to your Node.js backend
       const response = await client.post('/email/send', {
         name: formData.name,
         email: formData.email,
@@ -94,16 +94,16 @@ function ConnectionFormModal({ resume, onClose }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
       className="fixed inset-0 z-[500] flex items-center justify-center p-4 bg-[#050508]/90 backdrop-blur-xl"
     >
-      <motion.div
-        initial={{ scale: 0.9, y: 20, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.9, y: 20, opacity: 0 }}
+      <motion.div 
+        initial={{ scale: 0.9, y: 20, opacity: 0 }} 
+        animate={{ scale: 1, y: 0, opacity: 1 }} 
+        exit={{ scale: 0.9, y: 20, opacity: 0 }} 
         className="bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl w-full max-w-md shadow-[0_0_50px_rgba(6,182,212,0.3)] overflow-hidden relative"
       >
         <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
@@ -124,7 +124,7 @@ function ConnectionFormModal({ resume, onClose }) {
               </div>
               <h4 className="text-2xl font-bold text-white mb-2 font-mono">CONNECTION_STARTED</h4>
               <p className="text-slate-400 text-sm mb-6">
-                Your email app should have opened with the message pre-filled. Please hit <strong>Send</strong> in your email app to ensure Susanta receives your details!
+                Message sent successfully directly to Susanta! He will reach out to you shortly.
               </p>
               <button onClick={onClose} className="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-2 rounded-xl font-bold font-mono text-sm transition">
                 [ CLOSE_WINDOW ]
@@ -136,26 +136,26 @@ function ConnectionFormModal({ resume, onClose }) {
                 <label className="block text-xs font-mono text-cyan-400 mb-2">YOUR_NAME</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full bg-[#050508] border border-white/10 text-white p-3 pl-10 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm" placeholder="John Doe" />
+                  <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-[#050508] border border-white/10 text-white p-3 pl-10 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm" placeholder="John Doe" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-mono text-cyan-400 mb-2">YOUR_EMAIL</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input required type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full bg-[#050508] border border-white/10 text-white p-3 pl-10 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm" placeholder="john@example.com" />
+                  <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-[#050508] border border-white/10 text-white p-3 pl-10 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm" placeholder="john@example.com" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-mono text-cyan-400 mb-2">PHONE_NUMBER</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-[#050508] border border-white/10 text-white p-3 pl-10 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm" placeholder="+1 234 567 890" />
+                  <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-[#050508] border border-white/10 text-white p-3 pl-10 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm" placeholder="+1 234 567 890" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-mono text-cyan-400 mb-2">PURPOSE</label>
-                <textarea required value={formData.purpose} onChange={e => setFormData({ ...formData, purpose: e.target.value })} className="w-full bg-[#050508] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm h-24" placeholder="I'd like to discuss a Frontend role..." />
+                <textarea required value={formData.purpose} onChange={e => setFormData({...formData, purpose: e.target.value})} className="w-full bg-[#050508] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors font-mono text-sm h-24" placeholder="I'd like to discuss a Frontend role..." />
               </div>
               <button type="submit" disabled={status === 'sending'} className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold p-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mt-4 disabled:opacity-50">
                 {status === 'sending' ? (
@@ -175,16 +175,15 @@ function ConnectionFormModal({ resume, onClose }) {
   );
 }
 
-// --- 3. The Robot Say Hello Sequence (Auto-Tap Sequence) ---
+// --- 3. The Robot Say Hello Sequence ---
 function SayHelloSequence({ resume, onClose }) {
   const [step, setStep] = useState(1); // 1: Walking, 2: Watch, 3: Auto-Tap, 4: Form
 
   useEffect(() => {
-    // Sequence timing
-    const walkTimer = setTimeout(() => setStep(2), 2000); // Walk for 2s, then look at watch
-    const tapTimer = setTimeout(() => setStep(3), 3500); // Tap after 1.5s of looking
-    const modalTimer = setTimeout(() => setStep(4), 4500); // Open modal 1s after tap
-
+    const walkTimer = setTimeout(() => setStep(2), 2000);
+    const tapTimer = setTimeout(() => setStep(3), 3500);
+    const modalTimer = setTimeout(() => setStep(4), 4500);
+    
     return () => {
       clearTimeout(walkTimer);
       clearTimeout(tapTimer);
@@ -197,55 +196,45 @@ function SayHelloSequence({ resume, onClose }) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }} 
       className="fixed inset-0 z-[400] bg-[#050508]/95 backdrop-blur-md flex flex-col items-center justify-center overflow-hidden"
     >
       <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
 
-      {/* The Humanoid Robot */}
-      <motion.div
+      <motion.div 
         initial={{ y: 200, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 50, damping: 15 }}
         className="relative w-64 h-80 flex flex-col items-center justify-center z-10"
       >
-        {/* Antenna */}
         <div className="w-1 h-10 bg-gradient-to-t from-cyan-500 to-transparent"></div>
-        <motion.div
-          animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+        <motion.div 
+          animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }} 
           transition={{ repeat: Infinity, duration: 1.5 }}
           className="w-4 h-4 bg-red-500 rounded-full shadow-[0_0_20px_rgba(239,68,68,1)] mb-2"
         ></motion.div>
-
-        {/* Head */}
+        
         <div className="w-32 h-24 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-3xl relative flex items-center justify-center mb-2 overflow-hidden shadow-[0_0_30px_rgba(6,182,212,0.2)]">
           <div className="w-24 h-8 bg-cyan-500 rounded-full shadow-[0_0_20px_rgba(6,182,212,0.8)]"></div>
-          {/* Eyes (Blinking & Looking down at watch) */}
-          <motion.div
-            animate={step >= 2 ? { y: [0, 5, 0], scaleY: [1, 0.2, 1] } : { scaleY: [1, 0.1, 1] }}
+          <motion.div 
+            animate={step >= 2 ? { y: [0, 5, 0], scaleY: [1, 0.2, 1] } : { scaleY: [1, 0.1, 1] }} 
             transition={step >= 2 ? { duration: 0.5 } : { repeat: Infinity, duration: 3, repeatDelay: 2 }}
             className="absolute w-8 h-2 bg-[#050508] rounded-full"
           ></motion.div>
         </div>
 
-        {/* Body & Arms */}
         <div className="w-40 h-32 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-3xl relative flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.2)]">
-
-          {/* Left Arm (Static) */}
           <div className="absolute left-[-20px] top-1/2 -translate-y-1/2 w-6 h-24 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-full"></div>
-
-          {/* Right Arm (Swings up to look at watch, then taps) */}
-          <motion.div
+          <motion.div 
             initial={{ rotate: 0 }}
             animate={step >= 2 ? { rotate: -110, y: -30, x: -20 } : { rotate: [0, 5, 0] }}
             transition={step >= 2 ? { duration: 0.8, type: "spring" } : { repeat: Infinity, duration: 1 }}
             className="absolute right-[-20px] top-1/2 -translate-y-1/2 w-6 h-24 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-full origin-top flex flex-col items-center justify-end pb-2"
           >
-            {/* The Watch */}
-            <motion.div
+            <motion.div 
               initial={{ opacity: 0, scale: 0 }}
               animate={step >= 2 ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
               transition={{ delay: 0.2, duration: 0.3 }}
@@ -259,7 +248,6 @@ function SayHelloSequence({ resume, onClose }) {
             </motion.div>
           </motion.div>
 
-          {/* The Left Hand tapping the watch (Appears only in step 3) */}
           <motion.div
             initial={{ opacity: 0, rotate: 0 }}
             animate={step === 3 ? { opacity: 1, rotate: -60, x: -40, y: -40 } : { opacity: 0 }}
@@ -267,31 +255,28 @@ function SayHelloSequence({ resume, onClose }) {
             className="absolute left-0 top-0 w-12 h-12 border-2 border-cyan-500/50 rounded-full bg-[#0a0a0f] z-20 pointer-events-none"
           />
 
-          {/* Chest Core */}
           <div className="w-16 h-16 border-4 border-cyan-400/30 rounded-full flex items-center justify-center bg-[#050508] opacity-50">
-            <div className="w-8 h-8 bg-cyan-500/20 rounded-full"></div>
+             <div className="w-8 h-8 bg-cyan-500/20 rounded-full"></div>
           </div>
         </div>
 
-        {/* Legs (Walking Animation) */}
         <div className="flex gap-4 mt-2">
-          <motion.div
-            animate={step === 1 ? { rotate: [0, 20, 0, -20, 0] } : { rotate: 0 }}
+          <motion.div 
+            animate={step === 1 ? { rotate: [0, 20, 0, -20, 0] } : { rotate: 0 }} 
             transition={{ repeat: Infinity, duration: 0.5 }}
             className="w-8 h-20 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-b-2xl origin-top"
           />
-          <motion.div
-            animate={step === 1 ? { rotate: [0, -20, 0, 20, 0] } : { rotate: 0 }}
+          <motion.div 
+            animate={step === 1 ? { rotate: [0, -20, 0, 20, 0] } : { rotate: 0 }} 
             transition={{ repeat: Infinity, duration: 0.5 }}
             className="w-8 h-20 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-b-2xl origin-top"
           />
         </div>
       </motion.div>
 
-      {/* Text prompt */}
       <AnimatePresence>
         {step >= 2 && (
-          <motion.div
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-12 text-center font-mono z-10"
@@ -309,7 +294,110 @@ function SayHelloSequence({ resume, onClose }) {
   );
 }
 
-// --- 4. The 3D Tech Badge ---
+// --- 4. The Boot Sequence Loader ---
+function BootLoader({ onComplete }) {
+  const containerRef = useRef(null);
+  const [text, setText] = useState("");
+  
+  const bootLines = [
+    "> INITIALIZING KERNEL...",
+    "> MOUNTING /DEV/ROBOT_CORE...",
+    "> BYPASSING FIREWALL...",
+    "> DECRYPTING ASSETS...",
+    "> CONNECTION ESTABLISHED."
+  ];
+
+  useEffect(() => {
+    let currentLine = 0;
+    let currentChar = 0;
+    let displayText = "";
+    
+    const typeInterval = setInterval(() => {
+      if (currentLine < bootLines.length) {
+        if (currentChar < bootLines[currentLine].length) {
+          displayText += bootLines[currentLine][currentChar];
+          setText(displayText);
+          currentChar++;
+        } else {
+          displayText += "\n";
+          currentLine++;
+          currentChar = 0;
+        }
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 30);
+
+    const timer = setTimeout(() => {
+      if (containerRef.current) {
+        gsap.to(containerRef.current, { 
+          opacity: 0, 
+          duration: 0.8, 
+          ease: "power2.inOut",
+          onComplete: onComplete 
+        });
+      }
+    }, 3500);
+
+    return () => {
+      clearInterval(typeInterval);
+      clearTimeout(timer);
+    };
+  }, [onComplete]);
+
+  return (
+    <div ref={containerRef} className="fixed inset-0 z-[9999] bg-[#020205] flex flex-col items-center justify-center overflow-hidden font-mono">
+      <div className="absolute inset-0 opacity-20 pointer-events-none flex justify-around">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((col) => (
+          <div 
+            key={col} 
+            className="text-cyan-500 text-xs md:text-sm whitespace-pre writing-vertical animate-[floatUp_10s_linear_infinite]"
+            style={{ animationDelay: `-${Math.random() * 5}s` }}
+          >
+            {Array(20).fill("01011010 11001010 10100101").join("\n")}
+          </div>
+        ))}
+      </div>
+
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] animate-[scan_3s_ease-in-out_infinite]"></div>
+
+      <div className="absolute top-10 left-10 w-16 h-16 border-t-2 border-l-2 border-cyan-500/50"></div>
+      <div className="absolute top-10 right-10 w-16 h-16 border-t-2 border-r-2 border-cyan-500/50"></div>
+      <div className="absolute bottom-10 left-10 w-16 h-16 border-b-2 border-l-2 border-cyan-500/50"></div>
+      <div className="absolute bottom-10 right-10 w-16 h-16 border-b-2 border-r-2 border-cyan-500/50"></div>
+
+      <div className="relative z-10 w-full max-w-lg p-8 border border-cyan-500/30 bg-[#050508]/80 backdrop-blur-md rounded-xl shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+        <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-3">
+          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          <span className="ml-2 text-xs text-slate-400">root@susanta-system:~</span>
+        </div>
+
+        <div className="text-cyan-400 text-sm md:text-base leading-loose whitespace-pre-wrap h-40">
+          {text}
+          <span className="w-2 h-4 bg-cyan-400 inline-block animate-pulse ml-1 align-middle"></span>
+        </div>
+
+        <div className="mt-6">
+          <div className="flex justify-between text-xs text-slate-500 mb-2">
+            <span>SYS.BOOT</span>
+            <span className="animate-pulse">LOADING...</span>
+          </div>
+          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 animate-[loadBar_3.5s_ease-in-out_forwards]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 text-slate-600 text-[10px] tracking-widest uppercase">
+        Susanta // Cyberdyne Systems
+      </div>
+    </div>
+  );
+}
+
+// --- 5. The 3D Tech Badge ---
 function TechBadge({ label }) {
   return (
     <motion.div
@@ -326,7 +414,7 @@ function TechBadge({ label }) {
   );
 }
 
-// --- 5. Background Starfield ---
+// --- 6. Background Starfield ---
 function ParticleField() {
   const ref = useRef();
   const [sphere] = useState(() => {
@@ -348,7 +436,7 @@ function ParticleField() {
   );
 }
 
-// --- 6. The Robotic HUD Overlay ---
+// --- 7. The Robotic HUD Overlay ---
 function RoboticHUD() {
   const hudRef = useRef(null);
   useEffect(() => {
@@ -378,7 +466,7 @@ function RoboticHUD() {
   );
 }
 
-// --- 7. The 3D Robot Assistant ---
+// --- 8. The 3D Robot Assistant ---
 function DeveloperCore() {
   const robotRef = useRef();
   const headRef = useRef();
@@ -421,7 +509,7 @@ function DeveloperCore() {
   );
 }
 
-// --- 8. Robot Presenter (Transition Screen) ---
+// --- 9. Robot Presenter (Transition Screen) ---
 function RobotPresenter({ onComplete }) {
   const containerRef = useRef(); const orbRef = useRef(); const textRef = useRef();
   useEffect(() => {
@@ -455,7 +543,7 @@ function RobotPresenter({ onComplete }) {
   );
 }
 
-// --- 9. 3D Robot Assistant (Inside Modal) ---
+// --- 10. 3D Robot Assistant (Inside Modal) ---
 function RobotAssistant() {
   const robotRef = useRef(); const ringRef = useRef();
   useFrame((state) => {
@@ -481,7 +569,7 @@ function RobotAssistant() {
   );
 }
 
-// --- 10. The Full Screen About Overlay ---
+// --- 11. The Full Screen About Overlay ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
@@ -523,7 +611,7 @@ function AboutScreen({ resume, onClose }) {
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-
+      
       <div className="sticky top-0 w-full bg-[#050508]/90 backdrop-blur-xl border-b border-cyan-500/30 z-50 flex items-center justify-between px-6 py-4 shadow-[0_10px_30px_rgba(6,182,212,0.1)]">
         <div className="flex items-center gap-3"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div><h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase font-mono">Sys.Profile <span className="text-cyan-400">// {resume.hero.name || 'Susanta_Nayak'}</span></h2></div>
         <button type="button" onClick={onClose} className="bg-white/5 hover:bg-cyan-500/20 text-white px-6 py-2 rounded-lg font-mono text-sm transition border border-white/10 hover:border-cyan-500 flex items-center gap-2"><X className="w-4 h-4" />[ESC] CLOSE</button>
@@ -531,10 +619,10 @@ function AboutScreen({ resume, onClose }) {
 
       <div className="max-w-6xl mx-auto p-6 py-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-
+          
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col">
             <div className="relative bg-[#050508] border border-cyan-500/40 rounded-2xl overflow-hidden group shadow-[0_0_50px_rgba(6,182,212,0.15)] flex flex-col flex-grow">
-
+              
               <motion.div animate={{ top: ['0%', '100%', '0%'] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] z-20 opacity-50" />
 
               <div className="bg-[#0a0a0f] border-b border-cyan-500/30 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
@@ -553,7 +641,7 @@ function AboutScreen({ resume, onClose }) {
 
               <div className="p-6 md:p-8 relative flex-grow">
                 <motion.div animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50" />
-
+                
                 <div className="space-y-5 relative z-10 font-sans">
                   <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-slate-300 leading-relaxed text-sm md:text-base">
                     I am a results-driven <strong className="text-white">Software Engineer</strong> with over 2 years of experience specializing in building robust, scalable, and user-centric web applications. My expertise sits at the intersection of <strong className="text-cyan-400">Frontend Engineering</strong> and <strong className="text-cyan-400">L2/L3 Production Support</strong>.
@@ -594,7 +682,7 @@ function AboutScreen({ resume, onClose }) {
               <div className="w-full h-full cursor-crosshair relative z-10"><Canvas camera={{ position: [0, 0, 3.5], fov: 45 }}><ambientLight intensity={1.5} /><directionalLight position={[10, 10, 5]} intensity={3} color="#06b6d4" /><directionalLight position={[-10, -10, -5]} intensity={1.5} color="#3b82f6" /><Suspense fallback={null}><RobotAssistant /></Suspense></Canvas></div>
               <div className="absolute bottom-3 text-[10px] font-mono text-cyan-400/50 tracking-widest uppercase group-hover:text-cyan-400 transition-colors">[ Interactive AI Assistant Active ]</div>
             </div>
-
+            
             <div className="bg-white/[0.02] border border-white/10 p-8 rounded-3xl backdrop-blur-2xl hover:border-cyan-500/30 transition flex flex-col flex-grow justify-center">
               <h3 className="text-lg font-bold text-white mb-6 font-mono text-cyan-400">&gt; System_Metrics</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -643,14 +731,14 @@ function AboutScreen({ resume, onClose }) {
   );
 }
 
-// --- 11. Custom Cursor ---
+// --- 12. Custom Cursor ---
 function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   useEffect(() => { const updateMousePosition = (e) => setMousePosition({ x: e.clientX, y: e.clientY }); window.addEventListener('mousemove', updateMousePosition); return () => window.removeEventListener('mousemove', updateMousePosition); }, []);
   return <motion.div className="fixed top-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none z-0 hidden md:block" animate={{ x: mousePosition.x - 128, y: mousePosition.y - 128 }} transition={{ type: "tween", ease: "backOut", duration: 0.5 }} />;
 }
 
-// --- 12. Cinematic Overlays ---
+// --- 13. Cinematic Overlays ---
 function CinematicOverlays() {
   return (
     <>
@@ -660,7 +748,7 @@ function CinematicOverlays() {
   );
 }
 
-// --- 13. Animated Stat Counter ---
+// --- 14. Animated Stat Counter ---
 function StatCounter({ end, suffix = "", label }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -700,7 +788,7 @@ function StatCounter({ end, suffix = "", label }) {
   );
 }
 
-// --- 14. BOLD Project Card ---
+// --- 15. BOLD Project Card ---
 function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "bg-gradient-to-br from-cyan-600/30 via-blue-600/20 to-indigo-900/40", status = "live", problem, solution, result }) {
   return (
     <Tilt options={{ max: 12, scale: 1.02, speed: 400, glare: true, "max-glare": 0.3 }} className="h-full">
@@ -733,7 +821,7 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
   );
 }
 
-// --- 15. Auto-Scrolling Architecture Carousel ---
+// --- 16. Auto-Scrolling Architecture Carousel ---
 function ArchitectureCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const architectures = [
@@ -808,122 +896,9 @@ function ArchitectureCarousel() {
   );
 }
 
-// --- 17. The Hacking/Robotics Boot Sequence Loader ---
-function BootLoader({ onComplete }) {
-  const containerRef = useRef(null);
-  const [text, setText] = useState("");
-
-  const bootLines = [
-    "> INITIALIZING KERNEL...",
-    "> MOUNTING /DEV/ROBOT_CORE...",
-    "> BYPASSING FIREWALL...",
-    "> DECRYPTING ASSETS...",
-    "> CONNECTION ESTABLISHED."
-  ];
-
-  useEffect(() => {
-    // 1. Typing effect logic
-    let currentLine = 0;
-    let currentChar = 0;
-    let displayText = "";
-
-    const typeInterval = setInterval(() => {
-      if (currentLine < bootLines.length) {
-        if (currentChar < bootLines[currentLine].length) {
-          displayText += bootLines[currentLine][currentChar];
-          setText(displayText);
-          currentChar++;
-        } else {
-          displayText += "\n";
-          currentLine++;
-          currentChar = 0;
-        }
-      } else {
-        clearInterval(typeInterval);
-      }
-    }, 30);
-
-    // 2. Fade out after typing is done
-    const timer = setTimeout(() => {
-      if (containerRef.current) {
-        gsap.to(containerRef.current, {
-          opacity: 0,
-          duration: 0.8,
-          ease: "power2.inOut",
-          onComplete: onComplete
-        });
-      }
-    }, 3500); // Total time before fade out
-
-    return () => {
-      clearInterval(typeInterval);
-      clearTimeout(timer);
-    };
-  }, [onComplete]);
-
-  return (
-    <div ref={containerRef} className="fixed inset-0 z-[9999] bg-[#020205] flex flex-col items-center justify-center overflow-hidden font-mono">
-
-      {/* 1. Matrix Code Rain Background */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none flex justify-around">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((col) => (
-          <div
-            key={col}
-            className="text-cyan-500 text-xs md:text-sm whitespace-pre writing-vertical animate-[floatUp_10s_linear_infinite]"
-            style={{ animationDelay: `-${Math.random() * 5}s` }}
-          >
-            {Array(20).fill("01011010 11001010 10100101").join("\n")}
-          </div>
-        ))}
-      </div>
-
-      {/* 2. Scanning Laser Line */}
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] animate-[scan_3s_ease-in-out_infinite]"></div>
-
-      {/* 3. HUD Reticles */}
-      <div className="absolute top-10 left-10 w-16 h-16 border-t-2 border-l-2 border-cyan-500/50"></div>
-      <div className="absolute top-10 right-10 w-16 h-16 border-t-2 border-r-2 border-cyan-500/50"></div>
-      <div className="absolute bottom-10 left-10 w-16 h-16 border-b-2 border-l-2 border-cyan-500/50"></div>
-      <div className="absolute bottom-10 right-10 w-16 h-16 border-b-2 border-r-2 border-cyan-500/50"></div>
-
-      {/* 4. The Terminal Box */}
-      <div className="relative z-10 w-full max-w-lg p-8 border border-cyan-500/30 bg-[#050508]/80 backdrop-blur-md rounded-xl shadow-[0_0_50px_rgba(6,182,212,0.15)]">
-
-        {/* Terminal Header */}
-        <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-3">
-          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-          <span className="ml-2 text-xs text-slate-400">root@susanta-system:~</span>
-        </div>
-
-        {/* Terminal Typing Area */}
-        <div className="text-cyan-400 text-sm md:text-base leading-loose whitespace-pre-wrap h-40">
-          {text}
-          <span className="w-2 h-4 bg-cyan-400 inline-block animate-pulse ml-1 align-middle"></span>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mt-6">
-          <div className="flex justify-between text-xs text-slate-500 mb-2">
-            <span>SYS.BOOT</span>
-            <span className="animate-pulse">LOADING...</span>
-          </div>
-          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 w-full animate-[loadBar_3.5s_ease-in-out_forwards]"></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute bottom-6 text-slate-600 text-[10px] tracking-widest uppercase">
-        Susanta // Cyberdyne Systems
-      </div>
-    </div>
-  );
-}
-
-// --- 16. Main App Component ---
+// --- 17. Main App Component ---
 function App() {
+  const navigate = useNavigate();
   const [resume, setResume] = useState(null);
   const [error, setError] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -933,10 +908,8 @@ function App() {
   const [selectedExperience, setSelectedExperience] = useState(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const [isBooting, setIsBooting] = useState(true);
-
-  // NEW STATES FOR ROBOT SAY HELLO
   const [showRobotSequence, setShowRobotSequence] = useState(false);
+  const [isBooting, setIsBooting] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -948,7 +921,6 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle click outside for contact menu
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (isContactOpen && !e.target.closest('.contact-wrapper')) {
@@ -959,7 +931,6 @@ function App() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isContactOpen]);
 
-  // Handle browser back button for modals
   useEffect(() => {
     const handlePopState = () => {
       if (showAbout) setShowAbout(false);
@@ -1061,8 +1032,8 @@ function App() {
 
   return (
     <div className={`min-h-screen w-full bg-[#050508] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative ${showAbout ? 'overflow-hidden h-screen' : ''}`}>
-
-      {/* 👇 ADD THIS BOOT LOADER HERE 👇 */}
+      
+      {/* BOOT LOADER */}
       <AnimatePresence>
         {isBooting && <BootLoader onComplete={() => setIsBooting(false)} />}
       </AnimatePresence>
@@ -1073,13 +1044,13 @@ function App() {
       <AnimatePresence>{isTransitioning && <RobotPresenter onComplete={handleTransitionComplete} />}</AnimatePresence>
       <AnimatePresence>{showAbout && <AboutScreen resume={resume} onClose={closeAbout} />}</AnimatePresence>
       <AnimatePresence>{showContactModal && <ConnectionFormModal resume={resume} onClose={() => setShowContactModal(false)} />}</AnimatePresence>
-
+      
       {/* ROBOT SAY HELLO SEQUENCE */}
       <AnimatePresence>
         {showRobotSequence && (
-          <SayHelloSequence
+          <SayHelloSequence 
             resume={resume}
-            onClose={() => setShowRobotSequence(false)}
+            onClose={() => setShowRobotSequence(false)} 
           />
         )}
       </AnimatePresence>
@@ -1096,24 +1067,25 @@ function App() {
 
       <nav className="fixed top-0 w-full bg-[#050508]/70 backdrop-blur-xl border-b border-white/5 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <a href="#" className="text-2xl font-black text-white tracking-tighter">{resume.hero.name.split(' ')[0]}<span className="text-cyan-400">.</span></a>
+          <a href="/" className="text-2xl font-black text-white tracking-tighter">{resume.hero.name.split(' ')[0]}<span className="text-cyan-400">.</span></a>
+          
           <div className="hidden md:flex space-x-8 text-sm font-semibold">
             <button onClick={handleAboutClick} className="hover:text-cyan-400 transition-colors">About</button>
-            <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
-            <a href="#skills" className="hover:text-cyan-400 transition-colors">Skills</a>
-            <a href="#projects" className="hover:text-cyan-400 transition-colors">Work</a>
-            <a href="#experience" className="hover:text-cyan-400 transition-colors">Experience</a>
+            <button onClick={() => { navigate('/services'); document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-cyan-400 transition-colors">Services</button>
+            <button onClick={() => { navigate('/skills'); document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-cyan-400 transition-colors">Skills</button>
+            <button onClick={() => { navigate('/work'); document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-cyan-400 transition-colors">Work</button>
+            <button onClick={() => { navigate('/experience'); document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-cyan-400 transition-colors">Experience</button>
           </div>
 
           <div className="flex items-center gap-4 relative contact-wrapper">
-            <button
-              onClick={() => setIsContactOpen(!isContactOpen)}
+            <button 
+              onClick={() => setIsContactOpen(!isContactOpen)} 
               className="hidden md:flex bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-2.5 rounded-full font-semibold transition backdrop-blur-sm items-center gap-2 group"
             >
               Hire Me
               <svg className={`w-4 h-4 transition-transform duration-300 ${isContactOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
-
+            
             <AnimatePresence>
               {isContactOpen && <ContactHUD resume={resume} isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />}
             </AnimatePresence>
@@ -1130,10 +1102,10 @@ function App() {
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden bg-[#050508] border-b border-white/10 overflow-hidden">
               <div className="flex flex-col px-6 py-4 space-y-4 text-sm font-semibold">
                 <button onClick={() => { setIsMobileMenuOpen(false); handleAboutClick(); }} className="text-left text-slate-300 hover:text-cyan-400">About</button>
-                <a href="#services" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Services</a>
-                <a href="#skills" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Skills</a>
-                <a href="#projects" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Work</a>
-                <a href="#experience" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Experience</a>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigate('/services'); document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-left text-slate-300 hover:text-cyan-400">Services</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigate('/skills'); document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-left text-slate-300 hover:text-cyan-400">Skills</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigate('/work'); document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-left text-slate-300 hover:text-cyan-400">Work</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigate('/experience'); document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-left text-slate-300 hover:text-cyan-400">Experience</button>
                 <button onClick={() => { setIsMobileMenuOpen(false); setIsContactOpen(true); }} className="text-cyan-400 pt-2 border-t border-white/10 text-left">Hire Me</button>
               </div>
             </motion.div>
@@ -1176,8 +1148,8 @@ function App() {
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-100 to-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                   <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase">View My Profile<svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg></span>
                 </button>
-
-                <button
+                
+                <button 
                   onClick={() => setShowContactModal(true)}
                   className="group relative w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 text-white font-bold text-sm rounded-xl transition-all duration-300 hover:bg-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] flex items-center justify-center gap-3"
                 >
@@ -1232,7 +1204,7 @@ function App() {
             <div className="grid grid-cols-2 gap-2 relative z-10 mt-auto">
               <a href={`mailto:${resume.hero.email || 'iamsusantanayak99@gmail.com'}`} className="bg-cyan-500 hover:bg-cyan-400 text-black py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"><Mail className="w-3.5 h-3.5" />EMAIL</a>
               <a href={resume.hero.linkedin || '#'} target="_blank" rel="noreferrer" className="bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                 LINKEDIN
               </a>
             </div>
@@ -1424,9 +1396,9 @@ function App() {
         <section className="border-t border-white/10 pt-16 pb-8 text-center flex flex-col items-center">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">great.</span></h2>
           <p className="text-slate-400 mb-10 max-w-lg text-lg">Currently open for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
-
-          <button
-            onClick={() => setShowRobotSequence(true)}
+          
+          <button 
+            onClick={() => setShowRobotSequence(true)} 
             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-10 py-4 rounded-xl font-bold text-lg transition shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-16 inline-block hover:scale-105"
           >
             Say Hello
