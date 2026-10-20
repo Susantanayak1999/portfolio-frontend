@@ -10,6 +10,7 @@ import { io } from 'socket.io-client';
 import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
 import { X } from 'lucide-react';
+import { Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch } from 'lucide-react';
 
 // --- 0. The 3D Tech Badge Component ---
 function TechBadge({ label }) {
@@ -893,7 +894,7 @@ function App() {
           </div>
         </section>
 
-        {/* SKILLS SECTION (REDESIGNED: CYBERPUNK CORE) */}
+        {/* SKILLS SECTION (REDESIGNED: CYBERPUNK CORE WITH BACKGROUND ICONS) */}
         <section id="skills" className="mb-32 relative">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Technical Arsenal</h2>
@@ -901,60 +902,80 @@ function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(resume.skills || {}).map(([category, skills], idx) => (
-              <motion.div
-                key={category}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="group relative bg-[#0a0a0f] border border-white/10 rounded-2xl p-6 md:p-8 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500 overflow-hidden"
-              >
-                {/* Background animated glow */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/5 blur-[60px] group-hover:bg-cyan-500/20 transition-all duration-700 pointer-events-none"></div>
+            {Object.entries(resume.skills || {}).map(([category, skills], idx) => {
+              const lowerCat = category.toLowerCase();
 
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8 relative z-10 border-b border-white/5 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-6 bg-cyan-500 rounded-sm shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
-                    <h4 className="text-xl font-bold text-white capitalize font-mono tracking-tight">
-                      {category}
-                    </h4>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                    <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20">
-                      {skills.length} MODULES
-                    </span>
-                  </div>
-                </div>
+              // Assign background icons and colors based on category
+              let BgIcon = Code2;
+              let iconColor = "text-cyan-500";
+              let iconPos = "right-[-5%] top-[-10%]";
 
-                {/* Skill Pills Grid */}
-                <div className="flex flex-wrap gap-3 relative z-10">
-                  {skills.map((skill, i) => (
-                    <motion.div
-                      key={i}
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      className="relative px-4 py-2 bg-[#050508] border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden"
-                    >
-                      {/* Hover sliding glow effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 translate-x-[-100%] group-hover/skill:translate-x-[100%] transition-transform duration-1000"></div>
+              if (lowerCat.includes('front')) { BgIcon = Layout; iconColor = "text-blue-500"; iconPos = "right-[-10%] top-[-10%]"; }
+              else if (lowerCat.includes('back')) { BgIcon = Server; iconColor = "text-indigo-500"; iconPos = "right-[-5%] bottom-[-10%]"; }
+              else if (lowerCat.includes('tool')) { BgIcon = Terminal; iconColor = "text-emerald-500"; iconPos = "right-[-10%] bottom-[-15%]"; }
+              else if (lowerCat.includes('lang')) { BgIcon = Code2; iconColor = "text-cyan-500"; iconPos = "right-[-5%] top-[-10%]"; }
 
-                      {/* Square bullet */}
-                      <div className="w-1.5 h-1.5 bg-slate-600 group-hover/skill:bg-cyan-400 group-hover/skill:shadow-[0_0_8px_rgba(6,182,212,1)] transition-all rounded-sm"></div>
+              return (
+                <motion.div
+                  key={category}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  className="group relative bg-[#0a0a0f]/90 border border-white/10 rounded-2xl p-6 md:p-8 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500 overflow-hidden"
+                >
+                  {/* Background Grid Pattern */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
 
-                      <span className="text-sm font-medium text-slate-300 group-hover/skill:text-white transition-colors z-10 font-mono">
-                        {skill}
+                  {/* Giant Background Icon (Floating & Faint) */}
+                  <BgIcon className={`absolute w-64 h-64 opacity-[0.03] group-hover:opacity-[0.07] transition-all duration-700 pointer-events-none -rotate-12 group-hover:rotate-0 ${iconColor} ${iconPos}`} strokeWidth={1} />
+
+                  {/* Animated Glow */}
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/5 blur-[60px] group-hover:bg-cyan-500/10 transition-all duration-700 pointer-events-none"></div>
+
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-8 relative z-10 border-b border-white/5 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-6 bg-cyan-500 rounded-sm shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
+                      <h4 className="text-xl font-bold text-white capitalize font-mono tracking-tight">
+                        {category}
+                      </h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                      <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20 backdrop-blur-md">
+                        {skills.length} MODULES
                       </span>
-                    </motion.div>
-                  ))}
-                </div>
+                    </div>
+                  </div>
 
-                {/* Decorative corner brackets */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
-              </motion.div>
-            ))}
+                  {/* Skill Pills Grid */}
+                  <div className="flex flex-wrap gap-3 relative z-10">
+                    {skills.map((skill, i) => (
+                      <motion.div
+                        key={i}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="relative px-4 py-2 bg-[#050508]/80 backdrop-blur-sm border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden"
+                      >
+                        {/* Hover sliding glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/15 to-cyan-500/0 translate-x-[-100%] group-hover/skill:translate-x-[100%] transition-transform duration-1000"></div>
+
+                        {/* Square bullet */}
+                        <div className="w-1.5 h-1.5 bg-slate-600 group-hover/skill:bg-cyan-400 group-hover/skill:shadow-[0_0_8px_rgba(6,182,212,1)] transition-all rounded-sm"></div>
+
+                        <span className="text-sm font-medium text-slate-300 group-hover/skill:text-white transition-colors z-10 font-mono">
+                          {skill}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Decorative corner brackets */}
+                  <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
+                  <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 
