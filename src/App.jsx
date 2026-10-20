@@ -249,12 +249,8 @@ function AboutScreen({ resume, onClose }) {
 
                   {/* 👇 THIS IS THE BUTTON YOU WERE LOOKING FOR 👇 */}
                   <a
-                    href="/view-resume"
-                    onClick={() => {
-                      // We pass the Cloudinary URL to the new page
-                      window.history.pushState({ usr: { pdfUrl: downloadUrl } }, '');
-                      setShowDownloadPopup(false);
-                    }}
+                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`}
+                    onClick={() => setShowDownloadPopup(false)}
                     className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
                   >
                     Open the Secret
