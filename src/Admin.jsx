@@ -1,6 +1,34 @@
 import { useState, useEffect } from 'react';
 import client from './api/client';
 
+// Custom SVG Icon for the Login Screen (Replicating the design)
+const TechIcon = ({ type }) => {
+  if (type === 'react') return (
+    <svg className="w-10 h-10 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+      <circle cx="12" cy="12" r="2" fill="currentColor" />
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(0 12 12)" />
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" />
+    </svg>
+  );
+  if (type === 'ts') return (
+    <svg className="w-10 h-10 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M2 2h20v20H2V2zm11.4 12.6c.6.5 1.3.8 2.2.8 1.5 0 2.4-.8 2.4-2 0-1.1-.7-1.6-2-2l-.8-.3c-.5-.2-.7-.4-.7-.7 0-.4.3-.6.8-.6.5 0 .9.2 1.2.5l.8-.9c-.6-.5-1.3-.8-2.1-.8-1.4 0-2.3.8-2.3 2 0 1.1.7 1.6 2 2l.8.3c.5.2.7.4.7.8 0 .4-.3.6-.9.6-.6 0-1.1-.3-1.5-.7l-.8.9c.7.7 1.6 1.1 2.5 1.1zm-5.7.2h1.3v-4.9H11V9H5.5v1.1H7.7v4.7z" />
+    </svg>
+  );
+  if (type === 'js') return (
+    <svg className="w-10 h-10 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l9 4.9V17L12 22l-9-4.9V6.9L12 2zm0 2.2L5 8v8l7 3.8L19 16V8l-7-3.8zM9.5 14.3c-.5.8-1.3 1.2-2.3 1.2-1.6 0-2.6-1.1-2.6-2.7 0-1.7 1.1-2.7 2.7-2.7 1 0 1.8.4 2.2 1.2l-1 .8c-.3-.4-.6-.6-1.1-.6-.8 0-1.2.6-1.2 1.4s.5 1.4 1.2 1.4c.5 0 .8-.2 1.1-.6l1 .6zm5.9 1.1h-1.3v-3.8h-1.4V10.1h4.1v1.5h-1.4v3.8z" />
+    </svg>
+  );
+  if (type === 'razorpay') return (
+    <svg className="w-10 h-10 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 2L13 12.5V22L22 12.5V2zM11 10V22L2 12.5V2L11 10z" />
+    </svg>
+  );
+  return null;
+};
+
 export default function Admin() {
   const [token, setToken] = useState(localStorage.getItem('adminToken'));
   const [email, setEmail] = useState('admin@susanta.com');
@@ -47,12 +75,10 @@ export default function Admin() {
   const updateHero = (field, value) => setResume({ ...resume, hero: { ...resume.hero, [field]: value } });
   const updateAbout = (field, value) => setResume({ ...resume, about: { ...resume.about, [field]: value } });
   
-  // Services
   const updateService = (i, f, v) => { const s = [...(resume.services || [])]; s[i][f] = v; setResume({ ...resume, services: s }); };
   const addService = () => setResume({ ...resume, services: [...(resume.services || []), { title: '', description: '' }] });
   const removeService = (i) => setResume({ ...resume, services: (resume.services || []).filter((_, idx) => idx !== i) });
 
-  // Experience (Supports shortBullets and detailedBullets)
   const updateExperience = (i, f, v) => { const e = [...resume.experience]; e[i][f] = v; setResume({ ...resume, experience: e }); };
   const updateExpArray = (ei, field, bi, v) => { 
     const e = [...resume.experience]; 
@@ -74,43 +100,135 @@ export default function Admin() {
   const addExperience = () => setResume({ ...resume, experience: [...resume.experience, { company: '', role: '', location: '', startDate: '', endDate: '', shortBullets: [''], detailedBullets: [''] }] });
   const removeExperience = (i) => setResume({ ...resume, experience: resume.experience.filter((_, idx) => idx !== i) });
 
-  // Skills
   const updateSkill = (cat, val) => setResume({ ...resume, skills: { ...resume.skills, [cat]: val.split(',').map(s => s.trim()).filter(Boolean) } });
 
-  // Projects (Supports problem, solution, result, gradient)
   const updateProject = (i, f, v) => { const p = [...resume.projects]; p[i][f] = v; setResume({ ...resume, projects: p }); };
   const updateProjectStack = (i, v) => { const p = [...resume.projects]; p[i].stack = v.split(',').map(s => s.trim()).filter(Boolean); setResume({ ...resume, projects: p }); };
   const addProject = () => setResume({ ...resume, projects: [...resume.projects, { name: '', description: '', stack: [], liveUrl: '', repoUrl: '', problem: '', solution: '', result: '', previewGradient: 'bg-gradient-to-br from-cyan-600/30 to-blue-900/40' }] });
   const removeProject = (i) => setResume({ ...resume, projects: resume.projects.filter((_, idx) => idx !== i) });
 
-  // Education
   const updateEducation = (i, f, v) => { const e = [...resume.education]; e[i][f] = v; setResume({ ...resume, education: e }); };
   const addEducation = () => setResume({ ...resume, education: [...resume.education, { degree: '', institution: '', year: '' }] });
   const removeEducation = (i) => setResume({ ...resume, education: resume.education.filter((_, idx) => idx !== i) });
 
-  // Certifications
   const updateCert = (i, f, v) => { const c = [...(resume.certifications || [])]; c[i][f] = v; setResume({ ...resume, certifications: c }); };
   const addCert = () => setResume({ ...resume, certifications: [...(resume.certifications || []), { title: '', org: '', icon: '🏆' }] });
   const removeCert = (i) => setResume({ ...resume, certifications: (resume.certifications || []).filter((_, idx) => idx !== i) });
 
-  // Currently Building
   const updateBuilding = (i, f, v) => { const b = [...(resume.currentlyBuilding || [])]; b[i][f] = v; setResume({ ...resume, currentlyBuilding: b }); };
   const addBuilding = () => setResume({ ...resume, currentlyBuilding: [...(resume.currentlyBuilding || []), { label: '', value: '', icon: '⚡' }] });
   const removeBuilding = (i) => setResume({ ...resume, currentlyBuilding: (resume.currentlyBuilding || []).filter((_, idx) => idx !== i) });
 
+  // --- THE NEW LOGIN SCREEN ---
   if (!token) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#050508] font-sans">
-        <form onSubmit={handleLogin} className="bg-white/5 border border-white/10 p-10 rounded-3xl w-96 backdrop-blur-xl">
-          <h2 className="text-3xl font-bold mb-8 text-center text-white font-mono">System_Login</h2>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" required />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-6 rounded-xl" required />
-          <button type="submit" className="w-full bg-cyan-600 text-white p-4 rounded-xl font-bold">Authenticate</button>
-        </form>
+      <div className="flex min-h-screen bg-[#050508] font-sans overflow-hidden relative">
+        
+        {/* Background Grid & Ambient Glows */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none"></div>
+
+        {/* Left Side - Login Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative z-10">
+          <div className="w-full max-w-md">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="w-12 h-12 bg-cyan-500/20 border border-cyan-500/50 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white font-mono tracking-tight">Admin_Console</h2>
+                <p className="text-slate-400 font-mono text-xs">Secure Environment Access</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-xs font-mono text-cyan-400 mb-2">EMAIL_ADDRESS</label>
+                <input 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  className="w-full bg-[#0a0a0f] border border-white/10 text-white p-4 rounded-xl outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono" 
+                  required 
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-mono text-cyan-400 mb-2">PASSWORD</label>
+                <input 
+                  type="password" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  className="w-full bg-[#0a0a0f] border border-white/10 text-white p-4 rounded-xl outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all font-mono" 
+                  required 
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold p-4 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] flex items-center justify-center gap-3 group mt-8"
+              >
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                INITIALIZE_SESSION
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Right Side - Robotic Illustration */}
+        <div className="hidden lg:flex w-1/2 items-center justify-center relative overflow-hidden">
+          <div className="relative w-[500px] h-[500px] flex items-center justify-center">
+            
+            {/* Floating Tech Icons */}
+            <div className="absolute top-0 left-10 animate-[bounce_4s_infinite]"><TechIcon type="react" /></div>
+            <div className="absolute top-10 right-10 animate-[bounce_5s_infinite_reverse]"><TechIcon type="ts" /></div>
+            <div className="absolute bottom-20 left-0 animate-[bounce_6s_infinite]"><TechIcon type="js" /></div>
+            <div className="absolute bottom-10 right-20 animate-[bounce_4s_infinite_reverse]"><TechIcon type="razorpay" /></div>
+
+            {/* Rotating Orbit Rings */}
+            <div className="absolute inset-0 border border-dashed border-cyan-500/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
+            <div className="absolute inset-8 border border-cyan-500/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+            
+            {/* Central Robot */}
+            <div className="relative z-10 w-64 h-64 flex flex-col items-center justify-center drop-shadow-[0_0_30px_rgba(6,182,212,0.5)]">
+              {/* Antenna */}
+              <div className="w-1 h-8 bg-gradient-to-t from-cyan-500 to-transparent"></div>
+              <div className="w-3 h-3 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,1)] mb-2"></div>
+              
+              {/* Head */}
+              <div className="w-40 h-28 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-2xl relative flex items-center justify-center mb-2 overflow-hidden">
+                <div className="w-32 h-12 bg-cyan-500 rounded-lg shadow-[0_0_20px_rgba(6,182,212,0.8)]"></div>
+                {/* Ears */}
+                <div className="absolute left-[-10px] top-1/2 -translate-y-1/2 w-3 h-10 bg-blue-500 rounded-l-md"></div>
+                <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 w-3 h-10 bg-blue-500 rounded-r-md"></div>
+              </div>
+
+              {/* Body */}
+              <div className="w-52 h-32 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-3xl relative flex items-center justify-center">
+                <div className="w-16 h-16 border-4 border-cyan-400 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.8)] flex items-center justify-center bg-[#050508]">
+                  <div className="w-8 h-8 bg-cyan-400 rounded-full animate-pulse"></div>
+                </div>
+                {/* Arms */}
+                <div className="absolute left-[-15px] top-1/2 -translate-y-1/2 w-4 h-20 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-full"></div>
+                <div className="absolute right-[-15px] top-1/2 -translate-y-1/2 w-4 h-20 bg-[#0a0a0f] border-2 border-cyan-500/50 rounded-full"></div>
+              </div>
+
+              {/* Glowing Base */}
+              <div className="w-56 h-4 bg-cyan-500/20 blur-md rounded-[100%] mt-4 shadow-[0_0_40px_rgba(6,182,212,0.8)]"></div>
+            </div>
+          </div>
+          
+          {/* Floating text */}
+          <div className="absolute bottom-12 right-12 text-right">
+            <h1 className="text-3xl font-bold text-white mb-2 leading-tight">Let's Build <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Something Great</span></h1>
+            <p className="text-slate-400 font-mono text-xs">// SYSTEM_SECURED</p>
+          </div>
+        </div>
       </div>
     );
   }
 
+  // --- THE ADMIN DASHBOARD ---
   if (!resume) return <div className="p-10 text-center text-cyan-400 bg-[#050508] min-h-screen font-mono">Loading Database...</div>;
 
   return (
@@ -143,7 +261,6 @@ export default function Admin() {
               <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl h-28 outline-none focus:border-cyan-500 transition-colors" />
             </div>
 
-            {/* NEW CONTACT DETAILS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-white/10 pt-5 mt-5">
               <div>
                 <label className="block text-xs font-mono text-slate-400 mb-2">EMAIL ADDRESS</label>
@@ -342,7 +459,6 @@ export default function Admin() {
                 <input value={proj.repoUrl} onChange={e => updateProject(i, 'repoUrl', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-3 rounded-lg text-sm" placeholder="Repo URL" />
               </div>
 
-              {/* New Fields for Portfolio Cards */}
               <div className="grid grid-cols-3 gap-3 mb-3">
                 <input value={proj.problem || ''} onChange={e => updateProject(i, 'problem', e.target.value)} className="w-full bg-cyan-900/10 border border-cyan-500/20 text-cyan-300 p-3 rounded-lg text-sm" placeholder="Problem" />
                 <input value={proj.solution || ''} onChange={e => updateProject(i, 'solution', e.target.value)} className="w-full bg-blue-900/10 border border-blue-500/20 text-blue-300 p-3 rounded-lg text-sm" placeholder="Solution" />
