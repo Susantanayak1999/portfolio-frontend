@@ -177,7 +177,7 @@ function AboutScreen({ resume, onClose }) {
     
     setTimeout(() => {
       setDownloadState('complete');
-      setDownloadUrl('/resume.pdf'); // Points to the file GitHub creates
+      setDownloadUrl(`/resume.pdf?v=${new Date().getTime()}`);
     }, 2500);
   };
 
