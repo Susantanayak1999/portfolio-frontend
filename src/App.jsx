@@ -7,10 +7,9 @@ import { EffectComposer, Bloom, ChromaticAberration, Vignette } from '@react-thr
 import { BlendFunction } from 'postprocessing';
 import gsap from 'gsap';
 import { io } from 'socket.io-client';
-// ✅ Correct code:
-import { Tilt } from 'react-tilt';
+import Tilt from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
-//import { CountUp } from 'react-countup';
+import { X } from 'lucide-react';
 
 // --- 0. The 3D Tech Badge Component ---
 function TechBadge({ label }) {
@@ -260,10 +259,10 @@ function AboutScreen({ resume, onClose }) {
                   <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div>
                   <h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4>
                   <p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p>
-
-                  <a
-                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`}
-                    onClick={() => setShowDownloadPopup(false)}
+                  
+                  <a 
+                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`} 
+                    onClick={() => setShowDownloadPopup(false)} 
                     className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
                   >
                     Open the Secret
@@ -315,9 +314,9 @@ function StatCounter({ end, suffix = "", label }) {
   useEffect(() => {
     if (inView) {
       let start = 0;
-      const duration = 2000; // 2 seconds
+      const duration = 2000; 
       const increment = end / (duration / 16);
-
+      
       const timer = setInterval(() => {
         start += increment;
         if (start >= end) {
@@ -351,10 +350,8 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
       className="h-full"
     >
       <div className="group relative bg-[#0c0c14] border border-white/10 rounded-3xl p-8 hover:border-cyan-500/60 transition duration-500 flex flex-col h-full overflow-hidden">
-        {/* Radial glow */}
         <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/20 blur-[80px] group-hover:bg-cyan-500/40 transition-all duration-700" />
 
-        {/* Preview banner */}
         <div className={`relative h-32 -mx-8 -mt-8 mb-6 rounded-t-3xl overflow-hidden border-b border-white/10 ${previewGradient}`}>
           <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.15)_1px,transparent_1px)] bg-[size:20px_20px]" />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -371,18 +368,18 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
           <div className="flex gap-3">
             {liveUrl && (
               <a href={liveUrl} target="_blank" rel="noreferrer"
-                className="text-slate-400 hover:text-cyan-400 transition" title="Live">
+                 className="text-slate-400 hover:text-cyan-400 transition" title="Live">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
             )}
             {repoUrl && (
               <a href={repoUrl} target="_blank" rel="noreferrer"
-                className="text-slate-400 hover:text-cyan-400 transition" title="Repo">
+                 className="text-slate-400 hover:text-cyan-400 transition" title="Repo">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                 </svg>
               </a>
             )}
@@ -391,7 +388,6 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
 
         <p className="text-slate-400 leading-relaxed mb-4 flex-grow relative z-10">{desc}</p>
 
-        {/* Problem → Solution → Result mini grid */}
         {(problem || solution || result) && (
           <div className="grid grid-cols-3 gap-2 mb-5 relative z-10">
             {[{ k: "Problem", v: problem }, { k: "Solution", v: solution }, { k: "Result", v: result }]
@@ -409,7 +405,6 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
           {tech.map((t, j) => <TechBadge key={j} label={t} />)}
         </div>
 
-        {/* Bottom accent line */}
         <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-cyan-400 to-blue-600 group-hover:w-full transition-all duration-700" />
       </div>
     </Tilt>
@@ -424,6 +419,7 @@ function App() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedExperience, setSelectedExperience] = useState(null); // State for popup
 
   useEffect(() => {
     const handleScroll = () => {
@@ -476,10 +472,45 @@ function App() {
     { label: "Open To", value: "Frontend / Full-Stack Roles", icon: "🎯" },
   ];
   const certifications = resume.certifications || [
-    { title: "Star Performer Award", org: "iEnergizer (Razorpay Process)", icon: "🏆" },
+    { title: "Star Performer Award", org: "Compuraphs", icon: "🏆" },
     { title: "Full Stack UI Cert", org: "Naresh IT", icon: "🎓" },
     { title: "Production Support L2/L3", org: "Razorpay", icon: "🛡️" },
   ];
+
+  // Fallback Experience (Ensures new design shows immediately)
+  const displayExperience = resume.experience.map(exp => {
+    // If the DB data is old and missing short/detailed bullets, inject fallbacks based on role
+    if (!exp.shortBullets) {
+      const isProductSupport = exp.role.toLowerCase().includes('consultant') || exp.role.toLowerCase().includes('support');
+      return {
+        ...exp,
+        role: isProductSupport ? "Product Support Engineer" : (exp.role || "Software Developer"),
+        shortBullets: isProductSupport ? [
+          "Diagnosed and resolved L2/L3 production incidents for high-volume enterprise merchants, ensuring strict SLA compliance.",
+          "Executed deep-dive Root Cause Analyses (RCA) using Querybook, Coralogix, and custom SQL queries.",
+          "Engineered internal troubleshooting playbooks that reduced repeat incident volume by 30%."
+        ] : [
+          "Architected and deployed full-stack web applications using React.js, Node.js, and MongoDB.",
+          "Integrated secure payment gateways (Razorpay) and implemented JWT-based authentication systems.",
+          "Optimized frontend performance, reducing UI reload times by 60% through advanced state management."
+        ],
+        detailedBullets: isProductSupport ? [
+          "Diagnosed and resolved L2/L3 production incidents for high-volume enterprise merchants, ensuring strict SLA compliance.",
+          "Executed deep-dive Root Cause Analyses (RCA) using Querybook, Coralogix, and custom SQL queries to isolate payment gateway failures.",
+          "Engineered internal troubleshooting playbooks that reduced repeat incident volume by 30% across the support team.",
+          "Collaborated directly with core engineering teams to patch systemic issues in REST APIs, webhooks, and callback payloads.",
+          "Provided technical consultation to enterprise clients during critical payment outages, restoring merchant workflows rapidly."
+        ] : [
+          "Architected and deployed full-stack web applications using React.js, Node.js, and MongoDB.",
+          "Integrated secure payment gateways (Razorpay Checkout) and implemented JWT-based authentication and authorization.",
+          "Optimized frontend performance, reducing UI reload times by 60% through advanced state management and component memoization.",
+          "Built responsive, cross-browser compatible UIs using Tailwind CSS and Framer Motion, improving user engagement by 35%.",
+          "Designed and maintained RESTful APIs, ensuring clean data flow and robust error handling between client and server."
+        ]
+      };
+    }
+    return exp;
+  });
 
   return (
     <div className={`min-h-screen w-full bg-[#050508] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative ${showAbout ? 'overflow-hidden h-screen' : ''}`}>
@@ -631,7 +662,7 @@ function App() {
           <StatCounter end={100} suffix="%" label="SLA Met" />
         </div>
 
-        {/* SERVICES SECTION (Dynamic) */}
+        {/* SERVICES SECTION */}
         <section id="services" className="mb-32">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">What I Bring to the Table</h2>
@@ -655,7 +686,6 @@ function App() {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Featured Work</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {/* Project 1: Mixtape Kitchen */}
             <ProjectCard
               title="Mixtape Kitchen"
               desc="A full-stack restaurant web application featuring a dynamic menu, cart system, and table reservations. Architected with a React frontend, Node.js REST API, and MongoDB. Secure JWT auth, Razorpay Checkout, Mailer OTP verification, and Google Maps API."
@@ -668,7 +698,6 @@ function App() {
               previewGradient="bg-gradient-to-br from-orange-600/30 via-cyan-600/20 to-blue-900/40"
             />
 
-            {/* Project 2: Travelling Project */}
             <ProjectCard
               title="Travelling Project"
               desc="A modern travel and booking web application designed to help users explore destinations. Features a clean, responsive UI with smooth animations, dynamic routing, and optimized performance. Deployed and hosted on Vercel."
@@ -681,7 +710,6 @@ function App() {
               previewGradient="bg-gradient-to-br from-emerald-600/30 via-cyan-600/20 to-blue-900/40"
             />
 
-            {/* Project 3: Portfolio CMS (NEW) */}
             <ProjectCard
               title="Portfolio CMS"
               desc="A self-hosted headless CMS powering this very site. React + Vite frontend, Express REST API, MongoDB, and a JWT-protected admin panel with Multer file uploads and Socket.io real-time updates. Update every section without touching a line of code."
@@ -694,7 +722,6 @@ function App() {
               previewGradient="bg-gradient-to-br from-purple-600/30 via-cyan-600/20 to-blue-900/40"
             />
 
-            {/* Project 4: Educare365 */}
             <ProjectCard
               title="Educare365"
               desc="An education management platform with role-based dashboards, attendance tracking, and document sharing. Built with React, TypeScript, and a Node/Express backend with MongoDB. Focused on accessibility and clean data flows."
@@ -708,13 +735,12 @@ function App() {
             />
           </div>
 
-          {/* GitHub CTA */}
           <div className="mt-16 text-center bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-md relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] group-hover:bg-cyan-500/20 transition-all"></div>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-4 relative z-10">Want to see more like this?</h3>
             <p className="text-slate-400 mb-8 max-w-2xl mx-auto relative z-10">I have built several other full-stack applications, tools, and experiments. Explore my complete collection of repositories on GitHub.</p>
             <a href="https://github.com/Susantanayak1999" target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-xl font-bold transition shadow-[0_0_30px_rgba(6,182,212,0.4)] relative z-10 hover:scale-105">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
               View All Projects on GitHub
             </a>
           </div>
@@ -765,7 +791,7 @@ function App() {
           </div>
         </section>
 
-        {/* EXPERIENCE SECTION (REDESIGNED: SYSTEM LOG / TERMINAL) */}
+        {/* EXPERIENCE SECTION (UPGRADED: BULLETS + READ MORE MODAL) */}
         <section id="experience" className="mb-32 relative">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Professional Journey</h2>
@@ -773,11 +799,14 @@ function App() {
           </div>
 
           <div className="max-w-5xl mx-auto space-y-6 px-2 md:px-0">
-            {resume.experience.map((exp, i) => {
+            {displayExperience.map((exp, i) => {
               const isCurrent = i === 0;
+              const displayBullets = exp.shortBullets || exp.bullets || [];
+              const detailedBullets = exp.detailedBullets || exp.bullets || [];
+
               return (
-                <motion.div
-                  key={i}
+                <motion.div 
+                  key={i} 
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
@@ -785,7 +814,7 @@ function App() {
                   className="group relative"
                 >
                   <div className={`relative bg-[#0a0a0f] border ${isCurrent ? 'border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)]' : 'border-white/10 hover:border-cyan-500/30'} rounded-2xl overflow-hidden transition-all duration-500 backdrop-blur-xl`}>
-
+                    
                     {/* Terminal Header Bar */}
                     <div className="bg-white/[0.03] border-b border-white/10 px-3 md:px-4 py-3 flex flex-wrap items-center justify-between gap-2 relative z-10">
                       <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
@@ -794,7 +823,7 @@ function App() {
                           <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
                           <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
                         </div>
-
+                        
                         <div className="font-mono text-[10px] md:text-sm text-slate-300 flex items-center gap-1 md:gap-2 break-all">
                           <span className="text-cyan-400 shrink-0">~/career</span>
                           <span className="text-slate-600 shrink-0">$</span>
@@ -829,20 +858,32 @@ function App() {
                         </div>
                       </div>
 
-                      {/* Bullet points as terminal output */}
+                      {/* Short Bullet Points (Max 3) */}
                       <div className="space-y-3 relative z-10 border-l-2 border-cyan-500/20 pl-3 md:pl-6 ml-1 md:ml-2">
-                        {exp.bullets.map((bullet, j) => (
-                          <motion.div
-                            key={j}
+                        {displayBullets.slice(0, 3).map((bullet, j) => (
+                          <motion.div 
+                            key={j} 
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ delay: 0.3 + (j * 0.1) }}
                             className="text-slate-300 leading-relaxed text-xs md:text-base flex items-start group-hover:text-white transition-colors duration-300 break-words"
                           >
-                            <span className="text-cyan-500 mr-2 md:mr-3 font-mono text-[10px] md:text-xs mt-1 opacity-70 group-hover:opacity-100 shrink-0">[{String(j + 1).padStart(2, '0')}]</span>
+                            <span className="text-cyan-500 mr-2 md:mr-3 font-mono text-[10px] md:text-xs mt-1 opacity-70 group-hover:opacity-100 shrink-0">[{String(j+1).padStart(2, '0')}]</span> 
                             <span className="w-full">{bullet}</span>
                           </motion.div>
                         ))}
+                      </div>
+
+                      {/* Read More Button */}
+                      <div className="mt-6 relative z-10">
+                        <button 
+                          onClick={() => setSelectedExperience({ ...exp, detailedBullets })}
+                          className="text-cyan-400 font-mono text-xs md:text-sm hover:text-cyan-300 transition flex items-center gap-2 group/btn"
+                        >
+                          <span className="opacity-50 group-hover/btn:opacity-100 transition">&gt;</span>
+                          [ READ_MORE ]
+                          <span className="w-4 h-px bg-cyan-400/30 group-hover/btn:w-8 group-hover/btn:bg-cyan-400 transition-all"></span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -852,7 +893,7 @@ function App() {
           </div>
         </section>
 
-        {/* SKILLS SECTION (UPGRADED GRID) */}
+        {/* SKILLS SECTION */}
         <section id="skills" className="mb-32">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Technical Arsenal</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -892,6 +933,64 @@ function App() {
         </section>
       </main>
 
+      {/* EXPERIENCE MODAL (POPUP) */}
+      <AnimatePresence>
+        {selectedExperience && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-[#050508]/80 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden relative"
+            >
+              {/* Modal Header */}
+              <div className="p-6 border-b border-white/10 flex items-start justify-between bg-white/[0.02]">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">
+                    <span className="text-cyan-500 font-mono mr-2">#</span>
+                    {selectedExperience.role}
+                  </h3>
+                  <p className="text-cyan-400 font-mono text-sm">@ {selectedExperience.company}</p>
+                </div>
+                <button 
+                  onClick={() => setSelectedExperience(null)}
+                  className="p-2 bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body (Scrollable) */}
+              <div className="p-6 overflow-y-auto custom-scrollbar space-y-4">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
+                  <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">Duration:</span>
+                  <span className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs rounded-full font-mono">{selectedExperience.startDate} – {selectedExperience.endDate}</span>
+                </div>
+                
+                {selectedExperience.detailedBullets.map((bullet, j) => (
+                  <div key={j} className="text-slate-300 leading-relaxed text-sm md:text-base flex items-start">
+                    <span className="text-cyan-500 mr-3 font-mono text-xs mt-1 opacity-70">[{String(j+1).padStart(2, '0')}]</span> 
+                    <span>{bullet}</span>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Modal Footer */}
+              <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center">
+                <button onClick={() => setSelectedExperience(null)} className="text-xs font-mono text-slate-500 hover:text-white transition">
+                  [ CLOSE_WINDOW ]
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Floating Resume FAB */}
       <motion.button
         initial={{ scale: 0 }}
@@ -902,7 +1001,7 @@ function App() {
         aria-label="Download Resume"
       >
         <svg className="w-6 h-6 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
         </svg>
         <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0a0a0f] border border-cyan-500/30 text-cyan-400 text-xs font-mono px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
           Download_Resume.pdf
