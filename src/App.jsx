@@ -9,24 +9,65 @@ import gsap from 'gsap';
 import { io } from 'socket.io-client';
 import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
-import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch } from 'lucide-react';
+import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch, Phone, Mail } from 'lucide-react';
 
-// Simple typing effect for the profile
-function TypewriterText({ text }) {
-  const [displayText, setDisplayText] = useState('');
-  useEffect(() => {
-    let i = 0;
-    const timer = setInterval(() => {
-      setDisplayText((prev) => text.slice(0, i + 1));
-      i++;
-      if (i >= text.length) clearInterval(timer);
-    }, 15);
-    return () => clearInterval(timer);
-  }, [text]);
-  return <span>{displayText}</span>;
+// --- 1. The Interactive Contact HUD ---
+function ContactHUD({ resume, isOpen, onClose }) {
+  if (!isOpen) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="absolute top-full mt-4 right-0 w-72 bg-[#0a0a0f]/95 backdrop-blur-2xl border border-cyan-500/30 rounded-2xl shadow-[0_10px_40px_rgba(6,182,212,0.2)] overflow-hidden z-[100]"
+    >
+      <div className="bg-cyan-500/10 px-4 py-2 border-b border-cyan-500/20 flex items-center justify-between">
+        <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider">Initiate_Contact</span>
+        <button onClick={onClose} className="text-slate-400 hover:text-white transition"><X className="w-4 h-4" /></button>
+      </div>
+
+      <div className="p-2">
+        <a href={`mailto:${resume.hero.email}`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
+            <Mail className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Email Direct</div>
+            <div className="text-[10px] text-slate-400 font-mono truncate w-48">{resume.hero.email}</div>
+          </div>
+        </a>
+
+        <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
+            {/* REPLACED LUCIDE ICON WITH NATIVE SVG */}
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+            </svg>
+          </div>
+          <div>
+            <div className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">LinkedIn Network</div>
+            <div className="text-[10px] text-slate-400 font-mono">Connect & Message</div>
+          </div>
+        </a>
+
+        <div className="h-px bg-white/10 my-2 mx-3"></div>
+
+        <a href={`tel:+919348001084`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition group">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
+            <Phone className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Direct Line</div>
+            <div className="text-[10px] text-slate-400 font-mono">+91-9348001084</div>
+          </div>
+        </a>
+      </div>
+    </motion.div>
+  );
 }
 
-// --- 0. The 3D Tech Badge Component ---
+// --- 2. The 3D Tech Badge ---
 function TechBadge({ label }) {
   return (
     <motion.div
@@ -43,7 +84,7 @@ function TechBadge({ label }) {
   );
 }
 
-// --- Background Starfield ---
+// --- 3. Background Starfield ---
 function ParticleField() {
   const ref = useRef();
   const [sphere] = useState(() => {
@@ -65,7 +106,7 @@ function ParticleField() {
   );
 }
 
-// --- 1. The Robotic HUD Overlay ---
+// --- 4. The Robotic HUD Overlay ---
 function RoboticHUD() {
   const hudRef = useRef(null);
   useEffect(() => {
@@ -95,7 +136,7 @@ function RoboticHUD() {
   );
 }
 
-// --- 2. The 3D Robot Assistant ---
+// --- 5. The 3D Robot Assistant ---
 function DeveloperCore() {
   const robotRef = useRef();
   const headRef = useRef();
@@ -138,7 +179,7 @@ function DeveloperCore() {
   );
 }
 
-// --- 3. Robot Presenter (Transition Screen) ---
+// --- 6. Robot Presenter (Transition Screen) ---
 function RobotPresenter({ onComplete }) {
   const containerRef = useRef(); const orbRef = useRef(); const textRef = useRef();
   useEffect(() => {
@@ -172,7 +213,7 @@ function RobotPresenter({ onComplete }) {
   );
 }
 
-// --- 4. 3D Robot Assistant (Inside Modal) ---
+// --- 7. 3D Robot Assistant (Inside Modal) ---
 function RobotAssistant() {
   const robotRef = useRef(); const ringRef = useRef();
   useFrame((state) => {
@@ -198,7 +239,7 @@ function RobotAssistant() {
   );
 }
 
-// --- 5. The Full Screen About Overlay (Data Vault) ---
+// --- 8. The Full Screen About Overlay ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
@@ -241,24 +282,19 @@ function AboutScreen({ resume, onClose }) {
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
 
-      {/* Modal Header */}
       <div className="sticky top-0 w-full bg-[#050508]/90 backdrop-blur-xl border-b border-cyan-500/30 z-50 flex items-center justify-between px-6 py-4 shadow-[0_10px_30px_rgba(6,182,212,0.1)]">
         <div className="flex items-center gap-3"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div><h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase font-mono">Sys.Profile <span className="text-cyan-400">// Susanta_Nayak</span></h2></div>
         <button type="button" onClick={onClose} className="bg-white/5 hover:bg-cyan-500/20 text-white px-6 py-2 rounded-lg font-mono text-sm transition border border-white/10 hover:border-cyan-500 flex items-center gap-2"><X className="w-4 h-4" />[ESC] CLOSE</button>
       </div>
 
       <div className="max-w-6xl mx-auto p-6 py-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-          {/* LEFT COLUMN: Profile Summary */}
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col h-full">
-
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col">
             <div className="relative bg-[#050508] border border-cyan-500/40 rounded-2xl overflow-hidden group shadow-[0_0_50px_rgba(6,182,212,0.15)] flex flex-col flex-grow">
 
-              {/* Animated Top Scan Line */}
               <motion.div animate={{ top: ['0%', '100%', '0%'] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] z-20 opacity-50" />
 
-              {/* Terminal Header WITH INTEGRATED DOWNLOAD BUTTON */}
               <div className="bg-[#0a0a0f] border-b border-cyan-500/30 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between relative z-10 gap-4">
                 <div className="flex items-center gap-3">
                   <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
@@ -266,12 +302,7 @@ function AboutScreen({ resume, onClose }) {
                   </motion.div>
                   <h3 className="text-cyan-400 font-mono font-bold tracking-widest text-sm uppercase">Profile_Summary.exe</h3>
                 </div>
-
-                {/* The Download Button (Now inside the header) */}
-                <button
-                  onClick={handleDownloadClick}
-                  className="w-full sm:w-auto bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:border-cyan-400 px-4 py-2 rounded-lg font-mono text-[10px] md:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] group/btn"
-                >
+                <button onClick={handleDownloadClick} className="w-full sm:w-auto bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:border-cyan-400 px-4 py-2 rounded-lg font-mono text-[10px] md:text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] group/btn">
                   <Database className="w-3.5 h-3.5" />
                   [ DOWNLOAD_PDF ]
                   <svg className="w-3.5 h-3.5 group-hover/btn:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
@@ -279,17 +310,13 @@ function AboutScreen({ resume, onClose }) {
               </div>
 
               <div className="p-6 md:p-8 relative flex-grow">
-                {/* Background Moving Grid */}
                 <motion.div animate={{ backgroundPosition: ['0px 0px', '40px 40px'] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50" />
 
                 <div className="space-y-5 relative z-10 font-sans">
-
-                  {/* 1. Core Intro */}
                   <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-slate-300 leading-relaxed text-sm md:text-base">
                     I am a results-driven <strong className="text-white">Software Engineer</strong> with over 2 years of experience specializing in building robust, scalable, and user-centric web applications. My expertise sits at the intersection of <strong className="text-cyan-400">Frontend Engineering</strong> and <strong className="text-cyan-400">L2/L3 Production Support</strong>.
                   </motion.p>
 
-                  {/* 2. Current Deployment */}
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="relative bg-[#0a0a0f] border border-white/10 p-4 md:p-5 rounded-xl overflow-hidden group/block hover:border-cyan-500/50 transition-colors">
                     <div className="absolute left-0 top-0 w-1 h-full bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.8)]"></div>
                     <h4 className="text-cyan-400 font-mono text-xs mb-2 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping"></span> CURRENT_DEPLOYMENT</h4>
@@ -298,7 +325,6 @@ function AboutScreen({ resume, onClose }) {
                     </p>
                   </motion.div>
 
-                  {/* 3. AI Workflow */}
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="relative bg-purple-900/10 border border-purple-500/20 p-4 md:p-5 rounded-xl overflow-hidden group/block hover:border-purple-500/50 transition-colors">
                     <div className="absolute left-0 top-0 w-1 h-full bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.8)]"></div>
                     <h4 className="text-purple-400 font-mono text-xs mb-2 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-ping"></span> AI_ACCELERATED_WORKFLOW</h4>
@@ -307,7 +333,6 @@ function AboutScreen({ resume, onClose }) {
                     </p>
                   </motion.div>
 
-                  {/* 4. Background & Education */}
                   <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }} className="relative bg-white/[0.03] border border-white/10 p-4 md:p-5 rounded-xl overflow-hidden group/block hover:border-white/30 transition-colors">
                     <div className="absolute left-0 top-0 w-1 h-full bg-slate-500"></div>
                     <h4 className="text-slate-400 font-mono text-xs mb-2 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span> ACADEMIC_&_CERTIFICATIONS</h4>
@@ -316,22 +341,19 @@ function AboutScreen({ resume, onClose }) {
                       <li>B.Sc. Chemistry — <strong className="text-white">Utkal University</strong> (Self-taught Full Stack Engineer)</li>
                     </ul>
                   </motion.div>
-
                 </div>
               </div>
             </div>
-
           </motion.div>
 
-          {/* RIGHT COLUMN: Robot & Metrics */}
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="lg:col-span-5 flex flex-col gap-6">
-            <div className="relative h-[220px] w-full rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-2xl shadow-[0_0_30px_rgba(6,182,212,0.1)] flex items-center justify-center group">
+            <div className="relative h-[220px] w-full rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-2xl shadow-[0_0_30px_rgba(6,182,212,0.1)] flex items-center justify-center group shrink-0">
               <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent"></div>
               <div className="w-full h-full cursor-crosshair relative z-10"><Canvas camera={{ position: [0, 0, 3.5], fov: 45 }}><ambientLight intensity={1.5} /><directionalLight position={[10, 10, 5]} intensity={3} color="#06b6d4" /><directionalLight position={[-10, -10, -5]} intensity={1.5} color="#3b82f6" /><Suspense fallback={null}><RobotAssistant /></Suspense></Canvas></div>
               <div className="absolute bottom-3 text-[10px] font-mono text-cyan-400/50 tracking-widest uppercase group-hover:text-cyan-400 transition-colors">[ Interactive AI Assistant Active ]</div>
             </div>
 
-            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-3xl backdrop-blur-2xl hover:border-cyan-500/30 transition flex-grow">
+            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-3xl backdrop-blur-2xl hover:border-cyan-500/30 transition flex flex-col flex-grow justify-center">
               <h3 className="text-lg font-bold text-white mb-6 font-mono text-cyan-400">&gt; System_Metrics</h3>
               <div className="grid grid-cols-2 gap-4">
                 {[{ value: "2+", label: "Years Exp" }, { value: "500+", label: "Users Supported" }, { value: "L2/L3", label: "Prod Support" }, { value: "100%", label: "SLA Met" }].map((stat, i) => (
@@ -343,7 +365,6 @@ function AboutScreen({ resume, onClose }) {
         </div>
       </div>
 
-      {/* DOWNLOAD MODAL (Remains untouched) */}
       <AnimatePresence>
         {showDownloadPopup && (
           <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.9 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="fixed z-[300] w-[calc(100%-2rem)] sm:w-96 bottom-6 right-6 bg-[#0a0a0f]/95 backdrop-blur-2xl border border-cyan-500/50 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.3)] overflow-hidden">
@@ -380,14 +401,14 @@ function AboutScreen({ resume, onClose }) {
   );
 }
 
-// --- 6. Custom Cursor ---
+// --- 9. Custom Cursor ---
 function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   useEffect(() => { const updateMousePosition = (e) => setMousePosition({ x: e.clientX, y: e.clientY }); window.addEventListener('mousemove', updateMousePosition); return () => window.removeEventListener('mousemove', updateMousePosition); }, []);
   return <motion.div className="fixed top-0 left-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none z-0 hidden md:block" animate={{ x: mousePosition.x - 128, y: mousePosition.y - 128 }} transition={{ type: "tween", ease: "backOut", duration: 0.5 }} />;
 }
 
-// --- 7. Cinematic Overlays ---
+// --- 10. Cinematic Overlays ---
 function CinematicOverlays() {
   return (
     <>
@@ -397,7 +418,7 @@ function CinematicOverlays() {
   );
 }
 
-// --- 8. Animated Stat Counter ---
+// --- 11. Animated Stat Counter ---
 function StatCounter({ end, suffix = "", label }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -437,7 +458,7 @@ function StatCounter({ end, suffix = "", label }) {
   );
 }
 
-// --- 9. BOLD Project Card ---
+// --- 12. BOLD Project Card ---
 function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "bg-gradient-to-br from-cyan-600/30 via-blue-600/20 to-indigo-900/40", status = "live", problem, solution, result }) {
   return (
     <Tilt options={{ max: 12, scale: 1.02, speed: 400, glare: true, "max-glare": 0.3 }} className="h-full">
@@ -470,7 +491,7 @@ function ProjectCard({ title, desc, tech, liveUrl, repoUrl, previewGradient = "b
   );
 }
 
-// --- 10. Auto-Scrolling Architecture Carousel ---
+// --- 13. Auto-Scrolling Architecture Carousel ---
 function ArchitectureCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const architectures = [
@@ -545,7 +566,74 @@ function ArchitectureCarousel() {
   );
 }
 
-// --- 11. Main App Component ---
+// --- 13. The Full Screen Contact Modal (For Hero Button) ---
+function ContactModal({ resume, onClose }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-[#050508]/80 backdrop-blur-md"
+    >
+      <motion.div
+        initial={{ scale: 0.95, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.95, y: 20 }}
+        className="bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl w-full max-w-md shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden relative"
+      >
+        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+          <div className="flex items-center gap-3">
+            <Terminal className="w-5 h-5 text-cyan-400" />
+            <h3 className="text-lg font-bold text-white font-mono tracking-wider uppercase">Initiate_Contact</h3>
+          </div>
+          <button onClick={onClose} className="p-2 bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-3">
+          <a href={`mailto:${resume.hero.email}`} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition group">
+            <div className="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">Email Direct</div>
+              <div className="text-xs text-slate-400 font-mono">{resume.hero.email}</div>
+            </div>
+          </a>
+
+          <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition group">
+            <div className="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">LinkedIn Network</div>
+              <div className="text-xs text-slate-400 font-mono">Connect & Message</div>
+            </div>
+          </a>
+
+          <a href={`tel:+919348001084`} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-white/10 transition group">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
+              <Phone className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Direct Line</div>
+              <div className="text-xs text-slate-400 font-mono">+91-9348001084</div>
+            </div>
+          </a>
+        </div>
+
+        <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center">
+          <button onClick={onClose} className="text-xs font-mono text-slate-500 hover:text-white transition">[ CLOSE_WINDOW ]</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// --- 14. Main App Component ---
 function App() {
   const [resume, setResume] = useState(null);
   const [error, setError] = useState(null);
@@ -554,6 +642,8 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedExperience, setSelectedExperience] = useState(null);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -564,6 +654,17 @@ function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle click outside for contact menu
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (isContactOpen && !e.target.closest('.contact-wrapper')) {
+        setIsContactOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isContactOpen]);
 
   // Handle browser back button for modals
   useEffect(() => {
@@ -691,8 +792,21 @@ function App() {
             <a href="#projects" className="hover:text-cyan-400 transition-colors">Work</a>
             <a href="#experience" className="hover:text-cyan-400 transition-colors">Experience</a>
           </div>
-          <div className="flex items-center gap-4">
-            <a href={`mailto:${resume.hero.email}`} className="hidden md:block bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-2.5 rounded-full font-semibold transition backdrop-blur-sm">Hire Me</a>
+
+          {/* DESKTOP NAV ACTIONS */}
+          <div className="flex items-center gap-4 relative contact-wrapper">
+            <button
+              onClick={() => setIsContactOpen(!isContactOpen)}
+              className="hidden md:flex bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-2.5 rounded-full font-semibold transition backdrop-blur-sm items-center gap-2 group"
+            >
+              Hire Me
+              <svg className={`w-4 h-4 transition-transform duration-300 ${isContactOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+
+            <AnimatePresence>
+              {isContactOpen && <ContactHUD resume={resume} isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />}
+            </AnimatePresence>
+
             <button className="md:hidden text-white p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Menu">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />) : (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />)}
@@ -709,7 +823,7 @@ function App() {
                 <a href="#skills" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Skills</a>
                 <a href="#projects" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Work</a>
                 <a href="#experience" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-300 hover:text-cyan-400">Experience</a>
-                <a href={`mailto:${resume.hero.email}`} className="text-cyan-400 pt-2 border-t border-white/10">Hire Me</a>
+                <button onClick={() => { setIsMobileMenuOpen(false); setIsContactOpen(true); }} className="text-cyan-400 pt-2 border-t border-white/10 text-left">Hire Me</button>
               </div>
             </motion.div>
           )}
@@ -751,9 +865,23 @@ function App() {
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-100 to-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                   <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase">View My Profile<svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg></span>
                 </button>
-                <a href={`mailto:${resume.hero.email}`} className="group relative w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 text-white font-bold text-sm rounded-xl transition-all duration-300 hover:bg-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] flex items-center justify-center gap-3">
-                  <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase"><span className="w-2 h-2 rounded-full bg-green-400 group-hover:animate-pulse"></span>Let's Connect</span>
-                </a>
+
+                <div className="relative w-full sm:w-auto contact-wrapper z-50">
+                  <button
+                    onClick={() => setShowContactModal(true)}
+                    className="group relative w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 text-white font-bold text-sm rounded-xl transition-all duration-300 hover:bg-white/5 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] flex items-center justify-center gap-3"
+                  >
+                    <span className="relative z-10 flex items-center gap-2 tracking-wide uppercase">
+                      <span className="w-2 h-2 rounded-full bg-green-400 group-hover:animate-pulse"></span>
+                      Let's Connect
+                    </span>
+                  </button>
+                  <div className="absolute top-full mt-2 left-0 w-full sm:w-auto">
+                    <AnimatePresence>
+                      {isContactOpen && <ContactHUD resume={resume} isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />}
+                    </AnimatePresence>
+                  </div>
+                </div>
               </motion.div>
             </div>
 
@@ -798,8 +926,13 @@ function App() {
               </ul>
             </div>
             <div className="grid grid-cols-2 gap-2 relative z-10 mt-auto">
-              <a href={`mailto:${resume.hero.email}`} className="bg-cyan-500 hover:bg-cyan-400 text-black py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>EMAIL</a>
-              <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5"><svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>LINKEDIN</a>
+              <a href={`mailto:${resume.hero.email}`} className="bg-cyan-500 hover:bg-cyan-400 text-black py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"><Mail className="w-3.5 h-3.5" />EMAIL</a>
+              <a href={resume.hero.linkedin} target="_blank" rel="noreferrer" className="bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+                LINKEDIN
+              </a>
             </div>
           </div>
         </div>
@@ -1014,6 +1147,13 @@ function App() {
               <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center"><button onClick={() => setSelectedExperience(null)} className="text-xs font-mono text-slate-500 hover:text-white transition">[ CLOSE_WINDOW ]</button></div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* CONTACT MODAL (For Hero Button) */}
+      <AnimatePresence>
+        {showContactModal && (
+          <ContactModal resume={resume} onClose={() => setShowContactModal(false)} />
         )}
       </AnimatePresence>
 
