@@ -765,30 +765,85 @@ function App() {
           </div>
         </section>
 
-        {/* EXPERIENCE SECTION */}
-        <section id="experience" className="mb-32">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Professional Journey</h2>
-          <div className="max-w-4xl mx-auto space-y-8">
-            {resume.experience.map((exp, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-md hover:border-white/20 transition hover:-translate-y-1">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                  <div>
-                    <h4 className="text-2xl font-bold text-white">{exp.role}</h4>
-                    <div className="text-lg text-cyan-400 font-medium">{exp.company}</div>
-                  </div>
-                  <div className="mt-2 md:mt-0 px-4 py-1.5 bg-[#050508] border border-white/10 rounded-full text-sm font-bold text-slate-300">
-                    {exp.startDate} – {exp.endDate}
-                  </div>
-                </div>
-                <ul className="space-y-3 mt-6">
-                  {exp.bullets.map((bullet, j) => (
-                    <li key={j} className="text-slate-400 leading-relaxed flex items-start">
-                      <span className="text-cyan-500 mr-3 mt-1 text-xl leading-none">•</span> {bullet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                {/* EXPERIENCE SECTION (REDESIGNED: ROBOTIC TIMELINE) */}
+        <section id="experience" className="mb-32 relative">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Professional Journey</h2>
+            <p className="text-slate-400 font-mono text-sm">&gt; System_Trace: Mapping career deployment...</p>
+          </div>
+
+          <div className="max-w-4xl mx-auto relative">
+            {/* Glowing vertical connection line */}
+            <div className="absolute left-[28px] md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-500/0 via-cyan-500/50 to-blue-500/0 md:-translate-x-1/2"></div>
+
+            <div className="space-y-12">
+              {resume.experience.map((exp, i) => {
+                const isCurrent = i === 0; // Assuming the first item is your current job
+                return (
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                    className={`relative flex flex-col md:flex-row gap-6 md:gap-12 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+                  >
+                    {/* The Node/Ping on the timeline */}
+                    <div className="absolute left-[16px] md:left-1/2 top-8 md:top-1/2 w-6 h-6 md:-translate-x-1/2 md:-translate-y-1/2 flex items-center justify-center z-10">
+                      {isCurrent && (
+                        <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75 animate-ping"></span>
+                      )}
+                      <span className={`relative inline-flex rounded-full h-4 w-4 border-2 ${isCurrent ? 'bg-cyan-400 border-cyan-200 shadow-[0_0_15px_rgba(6,182,212,1)]' : 'bg-[#050508] border-slate-500'}`}></span>
+                    </div>
+
+                    {/* Empty space for the other side of the timeline on desktop */}
+                    <div className="hidden md:block w-1/2"></div>
+
+                    {/* The Job Card */}
+                    <div className="w-full md:w-1/2 pl-14 md:pl-0">
+                      <div className="group relative bg-[#0c0c14]/80 backdrop-blur-md border border-white/10 p-6 md:p-8 rounded-3xl hover:border-cyan-500/50 transition-all duration-500 overflow-hidden hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(6,182,212,0.15)]">
+                        
+                        {/* Robotic scanning line effect on hover */}
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[scan_1.5s_ease-in-out_infinite]"></div>
+                        
+                        {/* Background technical watermark */}
+                        <div className="absolute -bottom-4 -right-2 text-6xl font-black text-white/[0.03] select-none pointer-events-none group-hover:text-cyan-400/[0.05] transition-colors duration-500">
+                          0{i + 1}
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 relative z-10 gap-4">
+                          <div>
+                            <h4 className="text-xl md:text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">{exp.role}</h4>
+                            <div className="text-base text-cyan-400 font-mono mt-1 flex items-center gap-2">
+                              <span className="text-slate-500">&gt;</span> {exp.company}
+                            </div>
+                          </div>
+                          
+                          {/* Date Badge */}
+                          <div className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border whitespace-nowrap self-start sm:self-auto ${
+                            isCurrent 
+                              ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.2)]' 
+                              : 'bg-white/5 border-white/10 text-slate-400'
+                          }`}>
+                            {isCurrent && <span className="inline-block w-2 h-2 bg-cyan-400 rounded-full mr-2 animate-pulse"></span>}
+                            {exp.startDate} – {exp.endDate}
+                          </div>
+                        </div>
+
+                        <ul className="space-y-3 relative z-10">
+                          {exp.bullets.map((bullet, j) => (
+                            <li key={j} className="text-slate-400 leading-relaxed text-sm md:text-base flex items-start group-hover:text-slate-300 transition-colors">
+                              <span className="text-cyan-500 mr-3 mt-1.5 text-[10px] opacity-70 group-hover:opacity-100">◆</span> 
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
