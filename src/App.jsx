@@ -414,39 +414,54 @@ function CinematicOverlays() {
   );
 }
 
-// --- 9. Animated Stat Counter ---
 function StatCounter({ end, suffix = "", label }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
   const [count, setCount] = useState(0);
+  const ref = useRef(null);
 
   useEffect(() => {
-    if (inView) {
-      let start = 0;
-      const duration = 2000;
-      const increment = end / (duration / 16);
+    const element = ref.current;
+    if (!element) return;
+    let animationFrameId;
+    let hasAnimated = false;
 
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= end) {
-          setCount(end);
-          clearInterval(timer);
-        } else {
-          setCount(Math.ceil(start));
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          hasAnimated = true;
+          const duration = 2000;
+          let startTimestamp = null;
+
+          const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const easeOutProgress = 1 - Math.pow(1 - progress, 4);
+            setCount(Math.floor(easeOutProgress * end));
+            if (progress < 1) {
+              animationFrameId = requestAnimationFrame(step);
+            } else {
+              setCount(end);
+            }
+          };
+          animationFrameId = requestAnimationFrame(step);
         }
-      }, 16);
-
-      return () => clearInterval(timer);
-    }
-  }, [inView, end]);
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [end]);
 
   return (
-    <div ref={ref} className="text-center border-r border-white/10 last:border-0 group py-2">
+    <div ref={ref} className="flex flex-col items-center justify-center group py-2">
       <div className="text-4xl md:text-5xl font-black text-white mb-2 group-hover:text-cyan-400 transition-colors tabular-nums">
-        {count.toLocaleString()}
-        <span className="text-cyan-400">{suffix}</span>
+        {count}{suffix}
       </div>
-      <div className="text-xs md:text-sm font-semibold text-cyan-400 tracking-wider uppercase">{label}</div>
+      <div className="text-[10px] md:text-xs font-semibold text-cyan-400 tracking-wider uppercase text-center">
+        {label}
+      </div>
     </div>
   );
 }
@@ -742,14 +757,72 @@ function App() {
           </div>
         </section>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-32 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
-          <StatCounter end={2} suffix="+" label="Years Exp" />
-          <StatCounter end={500} suffix="+" label="Users Supported" />
-          <div className="text-center border-r border-white/10 last:border-0 group py-2">
-            <div className="text-4xl md:text-5xl font-black text-white mb-2 group-hover:text-cyan-400 transition-colors">L2/L3</div>
-            <div className="text-xs md:text-sm font-semibold text-cyan-400 tracking-wider uppercase">Production</div>
+        {/* HERO STATS & WHY HIRE ME */}
+        <div className="mb-32 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* Main Stats Bar (2x2 Grid) */}
+          <div className="lg:col-span-2 bg-white/[0.02] border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-md flex flex-col justify-center">
+            <div className="grid grid-cols-2 h-full gap-y-8 gap-x-4">
+
+              <div className="border-r border-b border-white/10 pb-6">
+                <StatCounter end={2} suffix="+" label="Years Exp" />
+              </div>
+
+              <div className="border-b border-white/10 pb-6">
+                <StatCounter end={500} suffix="+" label="Users Supported" />
+              </div>
+
+              <div className="border-r border-white/10 pt-6">
+                <div className="flex flex-col items-center justify-center group py-2">
+                  <div className="text-4xl md:text-5xl font-black text-white mb-2 group-hover:text-cyan-400 transition-colors">L2/L3</div>
+                  <div className="text-[10px] md:text-xs font-semibold text-cyan-400 tracking-wider uppercase text-center">Production</div>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <StatCounter end={100} suffix="%" label="SLA Met" />
+              </div>
+
+            </div>
           </div>
-          <StatCounter end={100} suffix="%" label="SLA Met" />
+
+          {/* The "Why Hire Me" Terminal Card */}
+          <div className="relative bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl p-6 md:p-8 overflow-hidden group hover:border-cyan-400 transition-colors shadow-[0_0_30px_rgba(6,182,212,0.1)] flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-[40px] pointer-events-none group-hover:bg-cyan-500/20 transition-all"></div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-4 border-b border-white/10 pb-3">
+                <Terminal className="w-4 h-4 text-cyan-400" />
+                <h4 className="font-mono text-xs font-bold text-white uppercase tracking-widest">Ready_To_Deploy.exe</h4>
+              </div>
+
+              <ul className="space-y-3 font-mono text-xs md:text-sm text-slate-300 mb-6 relative z-10">
+                <li className="flex items-start gap-2"><span className="text-cyan-500 mt-0.5">▸</span> Builds fast, payment-grade React frontends.</li>
+                <li className="flex items-start gap-2"><span className="text-cyan-500 mt-0.5">▸</span> Fixes critical L2/L3 production incidents.</li>
+                <li className="flex items-start gap-2"><span className="text-cyan-500 mt-0.5">▸</span> Ships full-stack MERN apps with secure auth.</li>
+              </ul>
+            </div>
+
+            {/* Quick Connect Buttons */}
+            <div className="grid grid-cols-2 gap-2 relative z-10 mt-auto">
+              <a
+                href={`mailto:${resume.hero.email}`}
+                className="bg-cyan-500 hover:bg-cyan-400 text-black py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                EMAIL
+              </a>
+              <a
+                href={resume.hero.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2.5 rounded-lg font-mono text-xs font-bold transition flex items-center justify-center gap-1.5"
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                LINKEDIN
+              </a>
+            </div>
+          </div>
         </div>
 
         <section id="services" className="mb-32">
