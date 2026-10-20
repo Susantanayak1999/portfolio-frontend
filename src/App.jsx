@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial, Float, Icosahedron, Box, Torus, Sphere } from '@react-three/drei';
 import gsap from 'gsap';
+import { io } from 'socket.io-client';
 
 // --- 0. The 3D Tech Badge Component ---
 function TechBadge({ label }) {
@@ -163,29 +164,28 @@ function RobotAssistant() {
   );
 }
 
-// --- 6. The Full Screen About Overlay (With Download) ---
+// --- 6. The Full Screen About Overlay ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
   const [downloadUrl, setDownloadUrl] = useState('');
 
   const handleDownloadClick = (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     e.stopPropagation();
-    setShowDownloadPopup(true);
+    setShowDownloadPopup(true); 
     setDownloadState('downloading');
-
+    
     setTimeout(() => {
       setDownloadState('complete');
-
-      // This uses the Cloudinary URL directly from the database
       if (resume.hero.pdfUrl) {
-        setDownloadUrl(resume.hero.pdfUrl);
+        setDownloadUrl(resume.hero.pdfUrl); 
       } else {
-        setDownloadUrl('#');
+        setDownloadUrl('#'); 
       }
     }, 2500);
   };
+
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
@@ -235,6 +235,7 @@ function AboutScreen({ resume, onClose }) {
           </motion.div>
         </div>
       </div>
+
       <AnimatePresence>
         {showDownloadPopup && (
           <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.9 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="fixed z-[300] w-[calc(100%-2rem)] sm:w-80 bottom-1/2 translate-y-1/2 right-4 left-4 mx-auto sm:bottom-6 sm:top-auto sm:translate-y-0 sm:right-6 sm:left-auto sm:mx-0 bg-[#0a0a0f]/95 backdrop-blur-2xl border border-cyan-500/50 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.3)] overflow-hidden">
@@ -246,11 +247,11 @@ function AboutScreen({ resume, onClose }) {
                   <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div>
                   <h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4>
                   <p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p>
-
-                  {/* 👇 THIS IS THE BUTTON YOU WERE LOOKING FOR 👇 */}
-                  <a
-                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`}
-                    onClick={() => setShowDownloadPopup(false)}
+                  
+                  {/* 👇 THIS LINK POINTS TO THE VIEWER PAGE */}
+                  <a 
+                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`} 
+                    onClick={() => setShowDownloadPopup(false)} 
                     className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
                   >
                     Open the Secret
@@ -284,7 +285,24 @@ function App() {
   }, []);
 
   useEffect(() => {
-    client.get('/resume').then(res => setResume(res.data)).catch(err => { console.error("Error fetching data:", err); setError("Failed to connect to the backend."); });
+    // 1. Initial Fetch
+    client.get('/resume').then(res => setResume(res.data)).catch(err => { 
+      console.error("Error fetching data:", err); 
+      setError("Failed to connect to the backend."); 
+    });
+
+    // 2. Setup Socket.io connection for real-time updates
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const socketUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
+    
+    const socket = io(socketUrl);
+
+    socket.on('resumeUpdated', (newResumeData) => {
+      console.log("Real-time update received!");
+      setResume(newResumeData);
+    });
+
+    return () => socket.disconnect();
   }, []);
 
   const handleAboutClick = () => { setIsTransitioning(true); setIsMobileMenuOpen(false); };
