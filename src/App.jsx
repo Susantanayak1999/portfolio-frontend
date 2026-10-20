@@ -808,6 +808,120 @@ function ArchitectureCarousel() {
   );
 }
 
+// --- 17. The Hacking/Robotics Boot Sequence Loader ---
+function BootLoader({ onComplete }) {
+  const containerRef = useRef(null);
+  const [text, setText] = useState("");
+
+  const bootLines = [
+    "> INITIALIZING KERNEL...",
+    "> MOUNTING /DEV/ROBOT_CORE...",
+    "> BYPASSING FIREWALL...",
+    "> DECRYPTING ASSETS...",
+    "> CONNECTION ESTABLISHED."
+  ];
+
+  useEffect(() => {
+    // 1. Typing effect logic
+    let currentLine = 0;
+    let currentChar = 0;
+    let displayText = "";
+
+    const typeInterval = setInterval(() => {
+      if (currentLine < bootLines.length) {
+        if (currentChar < bootLines[currentLine].length) {
+          displayText += bootLines[currentLine][currentChar];
+          setText(displayText);
+          currentChar++;
+        } else {
+          displayText += "\n";
+          currentLine++;
+          currentChar = 0;
+        }
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 30);
+
+    // 2. Fade out after typing is done
+    const timer = setTimeout(() => {
+      if (containerRef.current) {
+        gsap.to(containerRef.current, {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.inOut",
+          onComplete: onComplete
+        });
+      }
+    }, 3500); // Total time before fade out
+
+    return () => {
+      clearInterval(typeInterval);
+      clearTimeout(timer);
+    };
+  }, [onComplete]);
+
+  return (
+    <div ref={containerRef} className="fixed inset-0 z-[9999] bg-[#020205] flex flex-col items-center justify-center overflow-hidden font-mono">
+
+      {/* 1. Matrix Code Rain Background */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none flex justify-around">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((col) => (
+          <div
+            key={col}
+            className="text-cyan-500 text-xs md:text-sm whitespace-pre writing-vertical animate-[floatUp_10s_linear_infinite]"
+            style={{ animationDelay: `-${Math.random() * 5}s` }}
+          >
+            {Array(20).fill("01011010 11001010 10100101").join("\n")}
+          </div>
+        ))}
+      </div>
+
+      {/* 2. Scanning Laser Line */}
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_20px_rgba(6,182,212,1)] animate-[scan_3s_ease-in-out_infinite]"></div>
+
+      {/* 3. HUD Reticles */}
+      <div className="absolute top-10 left-10 w-16 h-16 border-t-2 border-l-2 border-cyan-500/50"></div>
+      <div className="absolute top-10 right-10 w-16 h-16 border-t-2 border-r-2 border-cyan-500/50"></div>
+      <div className="absolute bottom-10 left-10 w-16 h-16 border-b-2 border-l-2 border-cyan-500/50"></div>
+      <div className="absolute bottom-10 right-10 w-16 h-16 border-b-2 border-r-2 border-cyan-500/50"></div>
+
+      {/* 4. The Terminal Box */}
+      <div className="relative z-10 w-full max-w-lg p-8 border border-cyan-500/30 bg-[#050508]/80 backdrop-blur-md rounded-xl shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+
+        {/* Terminal Header */}
+        <div className="flex items-center gap-2 mb-6 border-b border-white/10 pb-3">
+          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          <span className="ml-2 text-xs text-slate-400">root@susanta-system:~</span>
+        </div>
+
+        {/* Terminal Typing Area */}
+        <div className="text-cyan-400 text-sm md:text-base leading-loose whitespace-pre-wrap h-40">
+          {text}
+          <span className="w-2 h-4 bg-cyan-400 inline-block animate-pulse ml-1 align-middle"></span>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mt-6">
+          <div className="flex justify-between text-xs text-slate-500 mb-2">
+            <span>SYS.BOOT</span>
+            <span className="animate-pulse">LOADING...</span>
+          </div>
+          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 w-full animate-[loadBar_3.5s_ease-in-out_forwards]"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 text-slate-600 text-[10px] tracking-widest uppercase">
+        Susanta // Cyberdyne Systems
+      </div>
+    </div>
+  );
+}
+
 // --- 16. Main App Component ---
 function App() {
   const [resume, setResume] = useState(null);
@@ -819,6 +933,7 @@ function App() {
   const [selectedExperience, setSelectedExperience] = useState(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [isBooting, setIsBooting] = useState(true);
 
   // NEW STATES FOR ROBOT SAY HELLO
   const [showRobotSequence, setShowRobotSequence] = useState(false);
@@ -946,6 +1061,12 @@ function App() {
 
   return (
     <div className={`min-h-screen w-full bg-[#050508] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative ${showAbout ? 'overflow-hidden h-screen' : ''}`}>
+
+      {/* 👇 ADD THIS BOOT LOADER HERE 👇 */}
+      <AnimatePresence>
+        {isBooting && <BootLoader onComplete={() => setIsBooting(false)} />}
+      </AnimatePresence>
+
       <CustomCursor />
       <CinematicOverlays />
 
