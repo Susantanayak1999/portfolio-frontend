@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
 import client from './api/client';
 
+// 👇 REPLACE THIS WITH YOUR ACTUAL GITHUB TOKEN AND DETAILS 👇
+const GITHUB_TOKEN = "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"; 
+const GITHUB_OWNER = "Susantanayak1999"; 
+const GITHUB_REPO = "susanta_portfolio_new"; 
+
 export default function Admin() {
   const [token, setToken] = useState(localStorage.getItem('adminToken'));
   const [email, setEmail] = useState('admin@susanta.com');
   const [password, setPassword] = useState('SuperSecretPassword123!');
   const [resume, setResume] = useState(null);
   const [status, setStatus] = useState('');
+  const [buildStatus, setBuildStatus] = useState(''); // New state for GitHub build
 
   useEffect(() => {
     if (token) {
@@ -42,7 +48,46 @@ export default function Admin() {
     }
   };
 
-  // Helpers
+  // --- Trigger GitHub Action ---
+  const triggerGitHubAction = async () => {
+    if (!resume.hero.latexCode) {
+      alert("Please paste your LaTeX code first and click 'Save All Changes'.");
+      return;
+    }
+
+    setBuildStatus('Triggering GitHub Action...');
+    
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/build-resume.yml/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ref: 'main',
+            inputs: {
+              latex_code: resume.hero.latexCode
+            }
+          })
+        }
+      );
+
+      if (response.ok) {
+        setBuildStatus('✅ GitHub is compiling your PDF! It will appear on your site in ~1 minute.');
+      } else {
+        const errorData = await response.json();
+        setBuildStatus(`❌ Error: ${errorData.message}`);
+      }
+    } catch (err) {
+      setBuildStatus('❌ Network error triggering GitHub.');
+    }
+  };
+
+  // --- Helpers ---
   const updateHero = (field, value) => setResume({ ...resume, hero: { ...resume.hero, [field]: value } });
   const updateAbout = (field, value) => setResume({ ...resume, about: { ...resume.about, [field]: value } });
   const updateService = (i, f, v) => { const s = [...resume.services]; s[i][f] = v; setResume({ ...resume, services: s }); };
@@ -87,28 +132,129 @@ export default function Admin() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 pt-10">
+        {/* HERO SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
           <h2 className="text-xl font-bold text-white mb-6 font-mono">Hero Section</h2>
-          <input value={resume.hero.name} onChange={e => updateHero('name', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" />
-          <input value={resume.hero.headline} onChange={e => updateHero('headline', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" />
-          <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-6 rounded-xl h-24" />
-
-         // Find this section inside Hero Section:
-          <div className="border-t border-white/10 pt-5 mt-5">
+          <input value={resume.hero.name} onChange={e => updateHero('name', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" placeholder="Name" />
+          <input value={resume.hero.headline} onChange={e => updateHero('headline', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" placeholder="Headline" />
+          <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl h-24" placeholder="Summary" />
+          
+          <div className="border-t border-white/10 pt-4 mt-4">
             <label className="block text-xs font-mono text-cyan-400 mb-2">PASTE LATEX CODE HERE</label>
-            <textarea
-              value={resume.hero.latexCode || ''}
-              onChange={e => updateHero('latexCode', e.target.value)}
-              className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 h-64 rounded-xl font-mono text-sm outline-none focus:border-cyan-500 transition-colors"
+            <textarea 
+              value={resume.hero.latexCode || ''} 
+              onChange={e => updateHero('latexCode', e.target.value)} 
+              className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 h-64 rounded-xl font-mono text-sm" 
               placeholder="\documentclass{article}..."
             />
+            
+            <div className="mt-4 flex items-center gap-4">
+              <button 
+                type="button"
+                onClick={triggerGitHubAction}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-xl font-bold"
+              >
+                Compile & Deploy PDF
+              </button>
+              {buildStatus && <p className="text-cyan-400 text-sm font-mono">{buildStatus}</p>}
+            </div>
           </div>
         </div>
 
+        {/* ABOUT SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
           <h2 className="text-xl font-bold text-white mb-6 font-mono">About Section</h2>
           <textarea value={resume.about?.summary || ''} onChange={e => updateAbout('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 h-40 rounded-xl" />
         </div>
+
+        {/* SERVICES */}
+        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-white font-mono">Services</h2>
+            <button onClick={addService} className="bg-indigo-500/20 text-indigo-400 px-4 py-2 rounded-lg text-sm">+ Add</button>
+          </div>
+          {resume.services?.map((service, i) => (
+            <div key={i} className="bg-[#0a0a0f] border border-white/5 p-6 mb-4 rounded-2xl relative">
+              <button onClick={() => removeService(i)} className="absolute top-4 right-4 text-red-500 text-xs font-mono">Remove</button>
+              <input value={service.title} onChange={e => updateService(i, 'title', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 mb-2 rounded-lg" placeholder="Title" />
+              <textarea value={service.description} onChange={e => updateService(i, 'description', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg h-20" placeholder="Description" />
+            </div>
+          ))}
+        </div>
+
+        {/* EXPERIENCE */}
+        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-white font-mono">Experience</h2>
+            <button onClick={addExperience} className="bg-purple-500/20 text-purple-400 px-4 py-2 rounded-lg text-sm">+ Add</button>
+          </div>
+          {resume.experience.map((exp, i) => (
+            <div key={i} className="bg-[#0a0a0f] border border-white/5 p-6 mb-4 rounded-2xl relative">
+              <button onClick={() => removeExperience(i)} className="absolute top-4 right-4 text-red-500 text-xs font-mono">Remove</button>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <input value={exp.role} onChange={e => updateExperience(i, 'role', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Role" />
+                <input value={exp.company} onChange={e => updateExperience(i, 'company', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Company" />
+                <input value={exp.startDate} onChange={e => updateExperience(i, 'startDate', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Start Date" />
+                <input value={exp.endDate} onChange={e => updateExperience(i, 'endDate', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="End Date" />
+              </div>
+              {exp.bullets.map((bullet, j) => (
+                <input key={j} value={bullet} onChange={e => updateBullet(i, j, e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 mb-2 rounded-lg text-sm" />
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* PROJECTS */}
+        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-white font-mono">Projects</h2>
+            <button onClick={addProject} className="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-lg text-sm">+ Add</button>
+          </div>
+          {resume.projects.map((proj, i) => (
+            <div key={i} className="bg-[#0a0a0f] border border-white/5 p-6 mb-4 rounded-2xl relative">
+              <button onClick={() => removeProject(i)} className="absolute top-4 right-4 text-red-500 text-xs font-mono">Remove</button>
+              <input value={proj.name} onChange={e => updateProject(i, 'name', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 mb-2 rounded-lg" placeholder="Project Name" />
+              <textarea value={proj.description} onChange={e => updateProject(i, 'description', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 mb-2 rounded-lg h-20" placeholder="Description" />
+              <input value={proj.stack.join(', ')} onChange={e => updateProjectStack(i, e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 mb-2 rounded-lg" placeholder="Tech Stack (comma separated)" />
+              <div className="grid grid-cols-2 gap-4">
+                <input value={proj.liveUrl} onChange={e => updateProject(i, 'liveUrl', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Live URL" />
+                <input value={proj.repoUrl} onChange={e => updateProject(i, 'repoUrl', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Repo URL" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* SKILLS */}
+        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
+          <h2 className="text-xl font-bold text-white mb-6 font-mono">Skills</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {Object.keys(resume.skills).map(category => (
+              <div key={category}>
+                <label className="block text-xs font-mono text-slate-500 mb-1 uppercase">{category}</label>
+                <textarea value={resume.skills[category].join(', ')} onChange={e => updateSkill(category, e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-2 rounded-lg h-24" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* EDUCATION */}
+        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-white font-mono">Education</h2>
+            <button onClick={addEducation} className="bg-orange-500/20 text-orange-400 px-4 py-2 rounded-lg text-sm">+ Add</button>
+          </div>
+          {resume.education.map((edu, i) => (
+            <div key={i} className="bg-[#0a0a0f] border border-white/5 p-6 mb-4 rounded-2xl relative">
+              <button onClick={() => removeEducation(i)} className="absolute top-4 right-4 text-red-500 text-xs font-mono">Remove</button>
+              <input value={edu.degree} onChange={e => updateEducation(i, 'degree', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 mb-2 rounded-lg" placeholder="Degree" />
+              <div className="grid grid-cols-2 gap-4">
+                <input value={edu.institution} onChange={e => updateEducation(i, 'institution', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Institution" />
+                <input value={edu.year} onChange={e => updateEducation(i, 'year', e.target.value)} className="w-full bg-white/5 border border-white/10 text-white p-2 rounded-lg" placeholder="Year" />
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0f]/90 border-t border-white/10 p-4 flex justify-between items-center px-10 z-50">

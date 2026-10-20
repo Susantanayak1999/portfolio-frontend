@@ -169,7 +169,7 @@ function AboutScreen({ resume, onClose }) {
   const [downloadState, setDownloadState] = useState('idle');
   const [downloadUrl, setDownloadUrl] = useState('');
 
-  const handleDownloadClick = (e) => {
+   const handleDownloadClick = (e) => {
     e.preventDefault(); 
     e.stopPropagation();
     setShowDownloadPopup(true); 
@@ -177,11 +177,7 @@ function AboutScreen({ resume, onClose }) {
     
     setTimeout(() => {
       setDownloadState('complete');
-      
-      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const backendUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
-      setDownloadUrl(`${backendUrl}/api/resume/download-latex`); 
-      
+      setDownloadUrl('/resume.pdf'); // Points to the file GitHub creates
     }, 2500);
   };
 
