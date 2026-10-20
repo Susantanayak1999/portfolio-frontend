@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react';
 import client from './api/client';
 
-// 👇 REPLACE THIS WITH YOUR ACTUAL GITHUB TOKEN AND DETAILS 👇
-const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-const GITHUB_OWNER = "Susantanayak1999"; 
-const GITHUB_REPO = "susanta_portfolio_new"; 
-
 export default function Admin() {
   const [token, setToken] = useState(localStorage.getItem('adminToken'));
   const [email, setEmail] = useState('admin@susanta.com');
   const [password, setPassword] = useState('SuperSecretPassword123!');
   const [resume, setResume] = useState(null);
   const [status, setStatus] = useState('');
-  const [buildStatus, setBuildStatus] = useState(''); // New state for GitHub build
 
   useEffect(() => {
     if (token) {
@@ -45,45 +39,6 @@ export default function Admin() {
       setTimeout(() => setStatus(''), 3000);
     } catch (err) {
       setStatus('❌ Error saving data');
-    }
-  };
-
-  // --- Trigger GitHub Action ---
-  const triggerGitHubAction = async () => {
-    if (!resume.hero.latexCode) {
-      alert("Please paste your LaTeX code first and click 'Save All Changes'.");
-      return;
-    }
-
-    setBuildStatus('Triggering GitHub Action...');
-    
-    try {
-      const response = await fetch(
-        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/build-resume.yml/dispatches`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            ref: 'main',
-            inputs: {
-              latex_code: resume.hero.latexCode
-            }
-          })
-        }
-      );
-
-      if (response.ok) {
-        setBuildStatus('✅ GitHub is compiling your PDF! It will appear on your site in ~1 minute.');
-      } else {
-        const errorData = await response.json();
-        setBuildStatus(`❌ Error: ${errorData.message}`);
-      }
-    } catch (err) {
-      setBuildStatus('❌ Network error triggering GitHub.');
     }
   };
 
@@ -133,7 +88,6 @@ export default function Admin() {
 
       <div className="max-w-5xl mx-auto px-6 pt-10">
         {/* HERO SECTION */}
-              {/* HERO SECTION */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-cyan-400"></div>
           <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-cyan-400">&gt;</span> Hero Section</h2>
@@ -170,6 +124,7 @@ export default function Admin() {
                       updateHero('pdfUrl', uploadRes.data.fileUrl);
                       setStatus('✅ PDF Uploaded! Click Save to finalize.');
                     } catch (err) {
+                      console.error(err);
                       setStatus('❌ Error uploading PDF');
                     }
                   }} 
