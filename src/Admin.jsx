@@ -7,6 +7,7 @@ export default function Admin() {
   const [password, setPassword] = useState('SuperSecretPassword123!');
   const [resume, setResume] = useState(null);
   const [status, setStatus] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -141,31 +142,73 @@ export default function Admin() {
               <label className="block text-xs font-mono text-slate-400 mb-2">SUMMARY</label>
               <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl h-28 outline-none focus:border-cyan-500 transition-colors" />
             </div>
+            
             <div className="border-t border-white/10 pt-5 mt-5">
               <label className="block text-xs font-mono text-cyan-400 mb-2">UPLOAD RESUME (PDF)</label>
               <div className="flex items-center gap-4">
                 <input 
                   type="file" 
                   accept=".pdf"
+                  disabled={isUploading}
                   onChange={async (e) => {
                     const file = e.target.files[0];
                     if (!file) return;
+                    
                     const formData = new FormData();
                     formData.append('resume', file);
+                    
                     try {
-                      setStatus('Uploading PDF to Cloudinary...');
-                      const uploadRes = await client.post('/admin/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                      setIsUploading(true);
+                      setStatus('⏳ Uploading PDF to Cloudinary...');
+                      
+                      const uploadRes = await client.post('/admin/upload', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                      });
+                      
                       updateHero('pdfUrl', uploadRes.data.fileUrl);
-                      setStatus('✅ PDF Uploaded! Click Save to finalize.');
+                      setStatus('✅ PDF Uploaded! Click "Save & Publish" to finalize.');
+                      
                     } catch (err) {
                       console.error(err);
                       setStatus('❌ Error uploading PDF');
+                    } finally {
+                      setIsUploading(false);
                     }
                   }} 
-                  className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 transition-all cursor-pointer" 
+                  className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 transition-all cursor-pointer disabled:opacity-50" 
                 />
               </div>
-              {resume.hero.pdfUrl && <p className="text-xs text-green-400 mt-3 font-mono flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> PDF Attached Successfully</p>}
+              
+              {/* PDF Status Display */}
+              {resume.hero.pdfUrl ? (
+                <div className="mt-3 flex items-center justify-between bg-green-500/10 border border-green-500/20 p-3 rounded-lg">
+                  <p className="text-xs text-green-400 font-mono flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 
+                    PDF Attached Successfully
+                  </p>
+                  <div className="flex gap-4">
+                    <a 
+                      href={resume.hero.pdfUrl} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="text-xs text-green-300 underline hover:text-white transition"
+                    >
+                      View Current PDF
+                    </a>
+                    <button 
+                      onClick={() => updateHero('pdfUrl', '')}
+                      className="text-xs text-red-400 underline hover:text-red-300 transition"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-yellow-400 mt-3 font-mono flex items-center gap-2">
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full"></span> 
+                  No PDF Uploaded yet
+                </p>
+              )}
             </div>
           </div>
         </div>
