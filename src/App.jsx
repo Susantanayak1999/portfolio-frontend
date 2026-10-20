@@ -169,18 +169,23 @@ function AboutScreen({ resume, onClose }) {
   const [downloadState, setDownloadState] = useState('idle');
   const [downloadUrl, setDownloadUrl] = useState('');
 
-   const handleDownloadClick = (e) => {
-    e.preventDefault(); 
+  const handleDownloadClick = (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    setShowDownloadPopup(true); 
+    setShowDownloadPopup(true);
     setDownloadState('downloading');
-    
+
     setTimeout(() => {
       setDownloadState('complete');
-      setDownloadUrl(`/resume.pdf?v=${new Date().getTime()}`);
+
+      // This uses the Cloudinary URL directly from the database
+      if (resume.hero.pdfUrl) {
+        setDownloadUrl(resume.hero.pdfUrl);
+      } else {
+        setDownloadUrl('#');
+      }
     }, 2500);
   };
-
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
@@ -241,14 +246,14 @@ function AboutScreen({ resume, onClose }) {
                   <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div>
                   <h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4>
                   <p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p>
-                  
+
                   {/* 👇 THIS IS THE BUTTON YOU WERE LOOKING FOR 👇 */}
-                  <a 
-                    href={downloadUrl} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    download="Susanta_Resume.pdf" 
-                    onClick={() => setShowDownloadPopup(false)} 
+                  <a
+                    href={downloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    download="Susanta_Resume.pdf"
+                    onClick={() => setShowDownloadPopup(false)}
                     className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
                   >
                     Open the Secret

@@ -133,30 +133,50 @@ export default function Admin() {
 
       <div className="max-w-5xl mx-auto px-6 pt-10">
         {/* HERO SECTION */}
-        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8">
-          <h2 className="text-xl font-bold text-white mb-6 font-mono">Hero Section</h2>
-          <input value={resume.hero.name} onChange={e => updateHero('name', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" placeholder="Name" />
-          <input value={resume.hero.headline} onChange={e => updateHero('headline', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl" placeholder="Headline" />
-          <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 mb-4 rounded-xl h-24" placeholder="Summary" />
-          
-          <div className="border-t border-white/10 pt-4 mt-4">
-            <label className="block text-xs font-mono text-cyan-400 mb-2">PASTE LATEX CODE HERE</label>
-            <textarea 
-              value={resume.hero.latexCode || ''} 
-              onChange={e => updateHero('latexCode', e.target.value)} 
-              className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 h-64 rounded-xl font-mono text-sm" 
-              placeholder="\documentclass{article}..."
-            />
+              {/* HERO SECTION */}
+        <div className="bg-white/5 border border-white/10 p-8 rounded-3xl mb-8 backdrop-blur-md relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-1 h-full bg-cyan-400"></div>
+          <h2 className="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2"><span className="text-cyan-400">&gt;</span> Hero Section</h2>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-xs font-mono text-slate-400 mb-2">NAME</label>
+              <input value={resume.hero.name} onChange={e => updateHero('name', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors" />
+            </div>
+            <div>
+              <label className="block text-xs font-mono text-slate-400 mb-2">HEADLINE</label>
+              <input value={resume.hero.headline} onChange={e => updateHero('headline', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none focus:border-cyan-500 transition-colors" />
+            </div>
+            <div>
+              <label className="block text-xs font-mono text-slate-400 mb-2">SUMMARY</label>
+              <textarea value={resume.hero.summary} onChange={e => updateHero('summary', e.target.value)} className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl h-28 outline-none focus:border-cyan-500 transition-colors" />
+            </div>
             
-            <div className="mt-4 flex items-center gap-4">
-              <button 
-                type="button"
-                onClick={triggerGitHubAction}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-xl font-bold"
-              >
-                Compile & Deploy PDF
-              </button>
-              {buildStatus && <p className="text-cyan-400 text-sm font-mono">{buildStatus}</p>}
+            <div className="border-t border-white/10 pt-5 mt-5">
+              <label className="block text-xs font-mono text-cyan-400 mb-2">UPLOAD RESUME (PDF)</label>
+              <div className="flex items-center gap-4">
+                <input 
+                  type="file" 
+                  accept=".pdf"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const formData = new FormData();
+                    formData.append('resume', file);
+                    try {
+                      setStatus('Uploading PDF to Cloudinary...');
+                      const uploadRes = await client.post('/admin/upload', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                      });
+                      updateHero('pdfUrl', uploadRes.data.fileUrl);
+                      setStatus('✅ PDF Uploaded! Click Save to finalize.');
+                    } catch (err) {
+                      setStatus('❌ Error uploading PDF');
+                    }
+                  }} 
+                  className="w-full bg-[#0a0a0f] border border-white/10 text-white p-3 rounded-xl outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-500/20 file:text-cyan-400 hover:file:bg-cyan-500/30 transition-all cursor-pointer" 
+                />
+              </div>
+              {resume.hero.pdfUrl && <p className="text-xs text-green-400 mt-3 font-mono flex items-center gap-2"><span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> PDF Attached Successfully</p>}
             </div>
           </div>
         </div>
