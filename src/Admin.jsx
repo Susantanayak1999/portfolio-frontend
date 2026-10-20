@@ -29,38 +29,66 @@ const TechIcon = ({ type }) => {
   return null;
 };
 
-// --- HOLOGRAPHIC NEURAL CORE BACKGROUND ---
-const NeuralBackground = () => {
+// --- CODE DESIGN BACKGROUND ---
+const CodeBackground = () => {
+  // Lines of code to float in the background
+  const codeSnippets = [
+    "const deploy = async () => {",
+    "  await db.connect(MONGO_URI);",
+    "  app.use(jwt({ secret }));",
+    "  return res.status(200).json({",
+    "    status: 'success',",
+    "    user: req.user.id",
+    "  });",
+    "};",
+    "import { Router } from 'express';",
+    "router.post('/login', authController);",
+    "export default router;",
+    "interface ResumeData {",
+    "  hero: { name: string };",
+    "  experience: Array<Job>;",
+    "}",
+    "useEffect(() => {",
+    "  socket.on('update', setResume);",
+    "}, [socket]);",
+    "git commit -m 'feat: new UI'",
+    "docker-compose up -d --build",
+    "pm2 start server.js -i max",
+    "SELECT * FROM users WHERE role='admin';",
+    "const [state, setState] = useState();",
+    "<Route path='/admin' element={<Admin />} />"
+  ];
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Cyber Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#050508]">
+      {/* 1. Pulsing Tech Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:40px_40px] animate-[pulse_4s_ease-in-out_infinite]"></div>
       
-      {/* Fast Sweeping Laser Scan */}
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400/50 shadow-[0_0_20px_rgba(6,182,212,0.8)] animate-[scan_4s_ease-in-out_infinite]"></div>
+      {/* 2. Ambient Glowing Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-cyan-600/10 blur-[120px] rounded-full"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full"></div>
 
-      {/* Floating Hologram (Center Right) */}
-      <div className="absolute top-[30%] right-[-10%] md:right-[5%] w-[600px] h-[600px] opacity-20 flex items-center justify-center">
-        {/* Rotating outer rings */}
-        <div className="absolute inset-0 border border-cyan-500/30 rounded-full animate-[spin_10s_linear_infinite]"></div>
-        <div className="absolute inset-10 border border-dashed border-blue-500/30 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
-        <div className="absolute inset-20 border border-cyan-400/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
-        
-        {/* Core Shape */}
-        <div className="relative w-64 h-64 flex items-center justify-center animate-[pulse_4s_ease-in-out_infinite]">
-          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_30px_rgba(6,182,212,0.8)]">
-            <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="rgba(6,182,212,0.1)" stroke="#06b6d4" strokeWidth="1" className="animate-[spin_30s_linear_infinite]" />
-            <polygon points="50,20 80,40 80,60 50,80 20,60 20,40" fill="transparent" stroke="#3b82f6" strokeWidth="1" className="animate-[spin_20s_linear_infinite_reverse]" />
-            <circle cx="50" cy="50" r="15" fill="#06b6d4" className="animate-pulse" />
-          </svg>
-        </div>
+      {/* 3. Floating Code Text */}
+      <div className="absolute inset-0 flex justify-around opacity-[0.07] font-mono text-[10px] md:text-xs text-cyan-300 leading-loose overflow-hidden">
+        {[0, 1, 2, 3, 4].map((col) => (
+          <div 
+            key={col} 
+            className="flex flex-col gap-4 animate-[floatUp_40s_linear_infinite]"
+            style={{ 
+              animationDelay: `-${col * 8}s`,
+              marginTop: `-${col * 20}%` 
+            }}
+          >
+            {/* Repeat the snippets to make the column long enough to scroll infinitely */}
+            {[...codeSnippets, ...codeSnippets, ...codeSnippets].map((code, i) => (
+              <span key={i} className="whitespace-nowrap">{code}</span>
+            ))}
+          </div>
+        ))}
       </div>
 
-      {/* Floating Hologram (Bottom Left) */}
-      <div className="absolute bottom-[-10%] left-[-10%] md:left-[5%] w-[400px] h-[400px] opacity-10 flex items-center justify-center">
-        <div className="absolute inset-0 border border-purple-500/30 rounded-full animate-[spin_12s_linear_infinite_reverse]"></div>
-        <div className="relative w-48 h-48 border border-dashed border-purple-400/50 rounded-xl animate-[spin_25s_linear_infinite]"></div>
-      </div>
+      {/* 4. Laser Scanline */}
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400/40 shadow-[0_0_15px_rgba(6,182,212,0.8)] animate-[scan_6s_ease-in-out_infinite]"></div>
     </div>
   );
 };
@@ -286,8 +314,8 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-[#050508] text-slate-300 font-sans pb-32 relative overflow-hidden">
       
-      {/* NEW NEURAL NETWORK BACKGROUND */}
-      <NeuralBackground />
+      {/* NEW CODE DESIGN BACKGROUND */}
+      <CodeBackground />
 
       <div className="sticky top-0 w-full bg-[#050508]/90 border-b border-white/10 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md">
         <h1 className="text-xl font-bold text-white font-mono flex items-center gap-2">
