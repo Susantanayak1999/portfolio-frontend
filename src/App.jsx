@@ -9,8 +9,7 @@ import gsap from 'gsap';
 import { io } from 'socket.io-client';
 import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
-import { X } from 'lucide-react';
-import { Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch } from 'lucide-react';
+import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch } from 'lucide-react';
 
 // --- 0. The 3D Tech Badge Component ---
 function TechBadge({ label }) {
@@ -177,11 +176,12 @@ function RobotAssistant() {
   );
 }
 
-// --- 6. The Full Screen About Overlay ---
+// --- 6. The Full Screen About Overlay (NEW THEME) ---
+// --- 6. The Full Screen About Overlay (NEW THEME) ---
 function AboutScreen({ resume, onClose }) {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
   const [downloadState, setDownloadState] = useState('idle');
-  const [downloadUrl, setDownloadUrl] = useState('');
+  const downloadUrl = resume.hero.pdfUrl || '#';
 
   const handleDownloadClick = (e) => {
     e.preventDefault();
@@ -189,48 +189,127 @@ function AboutScreen({ resume, onClose }) {
     setShowDownloadPopup(true);
     setDownloadState('downloading');
 
+    // Simulate the "Data Extraction" delay
     setTimeout(() => {
       setDownloadState('complete');
-      if (resume.hero.pdfUrl) {
-        setDownloadUrl(resume.hero.pdfUrl);
-      } else {
-        setDownloadUrl('#');
-      }
     }, 2500);
+  };
+
+  const triggerActualDownload = async () => {
+    try {
+      // 1. Fetch the file as a blob
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+
+      // 2. Create a temporary local URL for the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // 3. Create a hidden link and click it to download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'Susanta_Nayak_Resume.pdf'; // The exact file name they will see
+      document.body.appendChild(link);
+      link.click();
+
+      // 4. Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+
+      setShowDownloadPopup(false);
+    } catch (error) {
+      console.error("Download failed, falling back to direct link", error);
+      // Fallback: If the fetch fails (e.g., strict CORS), open the link anyway
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', 'Susanta_Nayak_Resume.pdf');
+      link.setAttribute('target', '_blank');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setShowDownloadPopup(false);
+    }
   };
 
   return (
     <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.5, type: "spring", bounce: 0.2 }} className="fixed inset-0 z-[150] bg-[#050508] overflow-y-auto">
+
+      {/* ... (KEEP YOUR EXISTING HEADER AND BACKGROUND GRID HERE) ... */}
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+
       <div className="sticky top-0 w-full bg-[#050508]/90 backdrop-blur-xl border-b border-cyan-500/30 z-50 flex items-center justify-between px-6 py-4 shadow-[0_10px_30px_rgba(6,182,212,0.1)]">
         <div className="flex items-center gap-3"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div><h2 className="text-lg md:text-xl font-bold text-white tracking-widest uppercase font-mono">Sys.Profile <span className="text-cyan-400">// Susanta_Nayak</span></h2></div>
-        <button type="button" onClick={onClose} className="bg-white/5 hover:bg-cyan-500/20 text-white px-6 py-2 rounded-lg font-mono text-sm transition border border-white/10 hover:border-cyan-500 flex items-center gap-2"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>[ESC] CLOSE</button>
+        <button type="button" onClick={onClose} className="bg-white/5 hover:bg-cyan-500/20 text-white px-6 py-2 rounded-lg font-mono text-sm transition border border-white/10 hover:border-cyan-500 flex items-center gap-2"><X className="w-4 h-4" />[ESC] CLOSE</button>
       </div>
 
       <div className="max-w-6xl mx-auto p-6 py-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 space-y-8">
-            <div className="bg-white/[0.02] border border-white/10 p-8 md:p-10 rounded-3xl relative overflow-hidden group hover:border-cyan-500/50 transition-colors duration-500 backdrop-blur-2xl">
-              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-cyan-400 to-blue-600"></div>
-              <h3 className="text-2xl font-bold text-white mb-8 font-mono flex items-center gap-3"><svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>&gt; Profile_Summary</h3>
-              <div className="space-y-6 text-slate-300 leading-relaxed text-base md:text-lg relative z-10 whitespace-pre-wrap">
-                {resume.about?.summary || "Loading profile..."}
+
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.5 }} className="lg:col-span-7 flex flex-col gap-6">
+
+            {/* PROFILE SUMMARY */}
+            <div className="relative bg-[#08080c] border border-cyan-500/30 rounded-2xl overflow-hidden group shadow-[0_0_40px_rgba(6,182,212,0.1)]">
+              <div className="bg-cyan-900/20 border-b border-cyan-500/30 px-6 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Terminal className="w-5 h-5 text-cyan-400" />
+                  <h3 className="text-cyan-400 font-mono font-bold tracking-widest text-sm uppercase">Profile_Summary.exe</h3>
+                </div>
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-cyan-500/50 animate-pulse"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-cyan-500/30"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-cyan-500/10"></div>
+                </div>
+              </div>
+
+              <div className="p-6 md:p-8 relative">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+
+                <div className="space-y-6 relative z-10 font-sans">
+                  <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                    I am a results-driven <strong className="text-white">Software Engineer</strong> with over 2 years of experience specializing in building robust, scalable, and user-centric web applications. My expertise sits at the intersection of <strong className="text-cyan-400">Frontend Engineering (React/Next.js)</strong> and <strong className="text-cyan-400">L2/L3 Production Support</strong>.
+                  </p>
+
+                  <div className="relative bg-[#050508] border border-white/5 p-5 rounded-xl overflow-hidden">
+                    <div className="absolute left-0 top-0 w-1 h-full bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.8)]"></div>
+                    <h4 className="text-cyan-400 font-mono text-xs mb-2 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping"></span> CURRENT_DEPLOYMENT
+                    </h4>
+                    <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                      Currently at <strong className="text-white">Razorpay (via iEnergizer)</strong>, I debug complex payment gateway integrations, analyze webhooks, and perform Root Cause Analysis (RCA) for enterprise merchants.
+                    </p>
+                  </div>
+
+                  <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                    Whether it's developing a full-stack MERN application, integrating secure payment gateways, or debugging a critical production issue at 2 AM, I approach every challenge with a strict problem-solving mindset and a focus on minimal downtime.
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 p-8 rounded-3xl backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div><h3 className="text-xl font-bold text-white mb-1">Download Resume</h3><p className="text-slate-400 text-sm">Get the full offline PDF for offline reading.</p></div>
+
+            {/* DOWNLOAD BUTTON MODULE */}
+            <div className="relative bg-gradient-to-r from-[#0a0a0f] to-[#0c0c14] border border-white/10 p-6 md:p-8 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-[40px] group-hover:bg-cyan-500/20 transition-all"></div>
+
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-white mb-1 font-mono flex items-center gap-2">
+                  <Database className="w-5 h-5 text-cyan-400" />
+                  Data_Extraction
+                </h3>
+                <p className="text-slate-400 text-sm">Initialize download sequence for the full PDF.</p>
+              </div>
 
               <button
                 type="button"
                 onClick={handleDownloadClick}
-                className="bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-xl font-bold transition flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-105 cursor-pointer"
+                className="relative z-10 w-full sm:w-auto bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 hover:border-cyan-400 px-6 py-3 rounded-lg font-mono text-sm font-bold transition-all duration-300 flex items-center justify-center gap-3 shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] group/btn"
               >
-                Download PDF
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span className="opacity-50 group-hover/btn:opacity-100 transition-opacity">&gt;</span>
+                [ EXECUTE_DOWNLOAD ]
+                <svg className="w-4 h-4 group-hover/btn:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
               </button>
             </div>
           </motion.div>
 
+          {/* ... (KEEP YOUR EXISTING RIGHT COLUMN ROBOT AND METRICS HERE) ... */}
           <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.5 }} className="lg:col-span-5 space-y-8">
             <div className="relative h-[220px] w-full rounded-3xl overflow-hidden border border-white/10 bg-white/[0.02] backdrop-blur-2xl shadow-[0_0_30px_rgba(6,182,212,0.1)] flex items-center justify-center group">
               <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent"></div>
@@ -249,26 +328,56 @@ function AboutScreen({ resume, onClose }) {
         </div>
       </div>
 
+      {/* ROBOTIC DOWNLOAD POPUP (Fixed to wait for user interaction) */}
       <AnimatePresence>
         {showDownloadPopup && (
-          <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.9 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="fixed z-[300] w-[calc(100%-2rem)] sm:w-80 bottom-1/2 translate-y-1/2 right-4 left-4 mx-auto sm:bottom-6 sm:top-auto sm:translate-y-0 sm:right-6 sm:left-auto sm:mx-0 bg-[#0a0a0f]/95 backdrop-blur-2xl border border-cyan-500/50 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.3)] overflow-hidden">
-            <div className="bg-cyan-500/10 px-5 py-3 border-b border-cyan-500/20 flex items-center justify-between"><div className="flex items-center gap-2"><svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Receipt_Generator</span></div><button type="button" onClick={() => setShowDownloadPopup(false)} className="text-slate-400 hover:text-white transition"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed z-[300] w-[calc(100%-2rem)] sm:w-96 bottom-6 right-6 bg-[#0a0a0f]/95 backdrop-blur-2xl border border-cyan-500/50 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.3)] overflow-hidden"
+          >
+            <div className="bg-cyan-500/10 px-5 py-3 border-b border-cyan-500/20 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-5 h-5 text-cyan-400" />
+                <span className="font-mono text-sm font-bold text-white uppercase tracking-wider">Data_Extraction_Module</span>
+              </div>
+              <button type="button" onClick={() => setShowDownloadPopup(false)} className="text-slate-400 hover:text-white transition"><X className="w-4 h-4" /></button>
+            </div>
+
             <div className="p-5 font-mono text-sm">
-              {downloadState === 'downloading' && (<><div className="flex justify-between mb-2 text-slate-400"><span>Customer:</span><span className="text-white">HR / Recruiter</span></div><div className="flex justify-between mb-2 text-slate-400"><span>Product:</span><span className="text-cyan-400">Susanta's Resume.pdf</span></div><div className="flex justify-between mb-4 text-slate-400"><span>Cost:</span><span className="text-green-400">FREE</span></div><div className="border-t border-dashed border-slate-600 pt-4 mb-4"><div className="flex justify-between mb-2"><span className="text-slate-400">Status:</span><span className="text-yellow-400 animate-pulse">Downloading...</span></div><div className="w-full bg-slate-800 rounded-full h-2 mt-2 overflow-hidden"><motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 2.5, ease: "easeInOut" }} className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" /></div></div><div className="text-[10px] text-slate-500 text-center leading-tight mt-6">Generating PDF from database...</div></>)}
+              {downloadState === 'downloading' && (
+                <>
+                  <div className="flex justify-between mb-2 text-slate-400"><span>Target:</span><span className="text-white">HR / Recruiter</span></div>
+                  <div className="flex justify-between mb-2 text-slate-400"><span>Payload:</span><span className="text-cyan-400">Susanta_Nayak_Resume.pdf</span></div>
+                  <div className="flex justify-between mb-4 text-slate-400"><span>Encryption:</span><span className="text-green-400">Bypassed</span></div>
+                  <div className="border-t border-dashed border-slate-600 pt-4 mb-4">
+                    <div className="flex justify-between mb-2"><span className="text-slate-400">Status:</span><span className="text-yellow-400 animate-pulse">Extracting Data...</span></div>
+                    <div className="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+                      <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 2.5, ease: "linear" }} className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full" />
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-slate-500 text-center leading-tight mt-6">Decrypting blocks...</div>
+                </>
+              )}
+
               {downloadState === 'complete' && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-                  <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg></div>
-                  <h4 className="text-white font-bold text-lg mb-2">Download Complete!</h4>
-                  <p className="text-slate-400 text-xs mb-6">The file is ready. Do you want to open the secret?</p>
+                  <div className="w-16 h-16 bg-green-500/10 border-2 border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+                    <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                  </div>
+                  <h4 className="text-white font-bold text-lg mb-2 font-mono">EXTRACTION_COMPLETE</h4>
+                  <p className="text-slate-400 text-xs mb-6 font-sans">File payload secured. Awaiting human authorization to open.</p>
 
-                  <a
-                    href={`/view-resume?url=${encodeURIComponent(downloadUrl)}`}
-                    onClick={() => setShowDownloadPopup(false)}
-                    className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition"
+                  {/* THIS BUTTON NOW TRIGGERS THE ACTUAL DOWNLOAD */}
+                  <button
+                    onClick={triggerActualDownload}
+                    className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition font-mono text-sm shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)]"
                   >
-                    Open the Secret
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                  </a>
+                    [ INITIATE_DOWNLOAD ]
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
                 </motion.div>
               )}
             </div>
@@ -278,7 +387,6 @@ function AboutScreen({ resume, onClose }) {
     </motion.div>
   );
 }
-
 // --- 7. Custom Cursor Glow ---
 function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -420,7 +528,7 @@ function App() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedExperience, setSelectedExperience] = useState(null); // State for popup
+  const [selectedExperience, setSelectedExperience] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -433,13 +541,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // 1. Initial Fetch
     client.get('/resume').then(res => setResume(res.data)).catch(err => {
       console.error("Error fetching data:", err);
       setError("Failed to connect to the backend.");
     });
 
-    // 2. Socket.io real-time updates
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const socketUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
     const socket = io(socketUrl);
@@ -466,7 +572,6 @@ function App() {
   if (error) return <div className="min-h-screen flex items-center justify-center bg-[#050508] text-red-500 font-bold">{error}</div>;
   if (!resume) return <div className="min-h-screen flex items-center justify-center bg-[#050508] text-white text-xl">Loading Experience...</div>;
 
-  // Fallback data for new sections (until backend schema is updated)
   const currentlyBuilding = resume.currentlyBuilding || [
     { label: "Active Project", value: "Portfolio CMS v2", icon: "⚡" },
     { label: "Learning", value: "Next.js 15 + TypeScript", icon: "📚" },
@@ -478,9 +583,7 @@ function App() {
     { title: "Production Support L2/L3", org: "Razorpay", icon: "🛡️" },
   ];
 
-  // Fallback Experience (Ensures new design shows immediately)
   const displayExperience = resume.experience.map(exp => {
-    // If the DB data is old and missing short/detailed bullets, inject fallbacks based on role
     if (!exp.shortBullets) {
       const isProductSupport = exp.role.toLowerCase().includes('consultant') || exp.role.toLowerCase().includes('support');
       return {
@@ -521,19 +624,16 @@ function App() {
       <AnimatePresence>{isTransitioning && <RobotPresenter onComplete={handleTransitionComplete} />}</AnimatePresence>
       <AnimatePresence>{showAbout && <AboutScreen resume={resume} onClose={() => setShowAbout(false)} />}</AnimatePresence>
 
-      {/* Background canvases */}
       <div className="fixed inset-0 z-0 pointer-events-none"><Canvas camera={{ position: [0, 0, 1] }}><ParticleField /></Canvas></div>
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full"></div>
         <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full"></div>
       </div>
 
-      {/* Scroll progress */}
       <div className="fixed top-0 left-0 right-0 h-1 z-[100] bg-transparent">
         <div className="h-full bg-gradient-to-r from-cyan-400 to-blue-600" style={{ width: `${scrollProgress}%` }} />
       </div>
 
-      {/* Navbar */}
       <nav className="fixed top-0 w-full bg-[#050508]/70 backdrop-blur-xl border-b border-white/5 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <a href="#" className="text-2xl font-black text-white tracking-tighter">{resume.hero.name.split(' ')[0]}<span className="text-cyan-400">.</span></a>
@@ -574,7 +674,6 @@ function App() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* HERO SECTION */}
         <section id="hero" className="min-h-[90vh] flex items-center pt-20 pb-12 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
             <div>
@@ -582,7 +681,6 @@ function App() {
                 <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span> Available for new opportunities
               </motion.div>
 
-              {/* Animated terminal headline */}
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="font-mono text-sm md:text-base text-cyan-400 mb-4 flex items-center gap-2">
                 <span className="text-green-400">➜</span>
                 <span className="text-slate-500">~</span>
@@ -634,16 +732,8 @@ function App() {
                   <DeveloperCore />
                   <FloatingTechCubes />
                   <EffectComposer>
-                    <Bloom
-                      intensity={1.8}
-                      luminanceThreshold={0.2}
-                      luminanceSmoothing={0.9}
-                      mipmapBlur
-                    />
-                    <ChromaticAberration
-                      offset={[0.0015, 0.0015]}
-                      blendFunction={BlendFunction.NORMAL}
-                    />
+                    <Bloom intensity={1.8} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
+                    <ChromaticAberration offset={[0.0015, 0.0015]} blendFunction={BlendFunction.NORMAL} />
                     <Vignette eskil={false} offset={0.1} darkness={1.1} />
                   </EffectComposer>
                 </Suspense>
@@ -652,7 +742,6 @@ function App() {
           </div>
         </section>
 
-        {/* ANIMATED STATS BAR */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-32 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
           <StatCounter end={2} suffix="+" label="Years Exp" />
           <StatCounter end={500} suffix="+" label="Users Supported" />
@@ -663,7 +752,6 @@ function App() {
           <StatCounter end={100} suffix="%" label="SLA Met" />
         </div>
 
-        {/* SERVICES SECTION */}
         <section id="services" className="mb-32">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">What I Bring to the Table</h2>
@@ -682,11 +770,9 @@ function App() {
           </div>
         </section>
 
-        {/* PROJECTS SECTION */}
         <section id="projects" className="mb-32">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">Featured Work</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
             <ProjectCard
               title="Mixtape Kitchen"
               desc="A full-stack restaurant web application featuring a dynamic menu, cart system, and table reservations. Architected with a React frontend, Node.js REST API, and MongoDB. Secure JWT auth, Razorpay Checkout, Mailer OTP verification, and Google Maps API."
@@ -747,7 +833,6 @@ function App() {
           </div>
         </section>
 
-        {/* CURRENTLY BUILDING (NEW) */}
         <section className="mb-32">
           <div className="bg-gradient-to-br from-cyan-950/40 via-[#0a0a0f] to-blue-950/40 border border-cyan-500/20 rounded-3xl p-5 md:p-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 md:w-96 h-64 md:h-96 bg-cyan-500/10 blur-[100px]" />
@@ -774,7 +859,6 @@ function App() {
           </div>
         </section>
 
-        {/* CERTIFICATIONS STRIP (NEW) */}
         <section className="mb-32">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent" />
@@ -792,7 +876,7 @@ function App() {
           </div>
         </section>
 
-        {/* EXPERIENCE SECTION (UPGRADED: BULLETS + READ MORE MODAL) */}
+        {/* EXPERIENCE SECTION */}
         <section id="experience" className="mb-32 relative">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Professional Journey</h2>
@@ -816,7 +900,6 @@ function App() {
                 >
                   <div className={`relative bg-[#0a0a0f] border ${isCurrent ? 'border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)]' : 'border-white/10 hover:border-cyan-500/30'} rounded-2xl overflow-hidden transition-all duration-500 backdrop-blur-xl`}>
 
-                    {/* Terminal Header Bar */}
                     <div className="bg-white/[0.03] border-b border-white/10 px-3 md:px-4 py-3 flex flex-wrap items-center justify-between gap-2 relative z-10">
                       <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
                         <div className="flex gap-1.5 shrink-0">
@@ -841,7 +924,6 @@ function App() {
                       </div>
                     </div>
 
-                    {/* Terminal Content Body */}
                     <div className="p-4 md:p-8 relative">
                       <div className={`absolute top-0 right-0 w-64 h-64 blur-[100px] pointer-events-none ${isCurrent ? 'bg-cyan-500/10' : 'bg-blue-500/5 group-hover:bg-cyan-500/10'} transition-all duration-700`}></div>
 
@@ -859,7 +941,6 @@ function App() {
                         </div>
                       </div>
 
-                      {/* Short Bullet Points (Max 3) */}
                       <div className="space-y-3 relative z-10 border-l-2 border-cyan-500/20 pl-3 md:pl-6 ml-1 md:ml-2">
                         {displayBullets.slice(0, 3).map((bullet, j) => (
                           <motion.div
@@ -875,7 +956,6 @@ function App() {
                         ))}
                       </div>
 
-                      {/* Read More Button */}
                       <div className="mt-6 relative z-10">
                         <button
                           onClick={() => setSelectedExperience({ ...exp, detailedBullets })}
@@ -905,7 +985,6 @@ function App() {
             {Object.entries(resume.skills || {}).map(([category, skills], idx) => {
               const lowerCat = category.toLowerCase();
 
-              // Assign background icons and colors based on category
               let BgIcon = Code2;
               let iconColor = "text-cyan-500";
               let iconPos = "right-[-5%] top-[-10%]";
@@ -924,32 +1003,21 @@ function App() {
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                   className="group relative bg-[#0a0a0f]/90 border border-white/10 rounded-2xl p-6 md:p-8 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-500 overflow-hidden"
                 >
-                  {/* Background Grid Pattern */}
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
-
-                  {/* Giant Background Icon (Floating & Faint) */}
                   <BgIcon className={`absolute w-64 h-64 opacity-[0.03] group-hover:opacity-[0.07] transition-all duration-700 pointer-events-none -rotate-12 group-hover:rotate-0 ${iconColor} ${iconPos}`} strokeWidth={1} />
-
-                  {/* Animated Glow */}
                   <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/5 blur-[60px] group-hover:bg-cyan-500/10 transition-all duration-700 pointer-events-none"></div>
 
-                  {/* Header */}
                   <div className="flex items-center justify-between mb-8 relative z-10 border-b border-white/5 pb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-6 bg-cyan-500 rounded-sm shadow-[0_0_10px_rgba(6,182,212,0.8)]"></div>
-                      <h4 className="text-xl font-bold text-white capitalize font-mono tracking-tight">
-                        {category}
-                      </h4>
+                      <h4 className="text-xl font-bold text-white capitalize font-mono tracking-tight">{category}</h4>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                      <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20 backdrop-blur-md">
-                        {skills.length} MODULES
-                      </span>
+                      <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20 backdrop-blur-md">{skills.length} MODULES</span>
                     </div>
                   </div>
 
-                  {/* Skill Pills Grid */}
                   <div className="flex flex-wrap gap-3 relative z-10">
                     {skills.map((skill, i) => (
                       <motion.div
@@ -957,20 +1025,13 @@ function App() {
                         whileHover={{ scale: 1.05, y: -2 }}
                         className="relative px-4 py-2 bg-[#050508]/80 backdrop-blur-sm border border-white/10 rounded-lg flex items-center gap-2 cursor-default group/skill overflow-hidden"
                       >
-                        {/* Hover sliding glow effect */}
                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/15 to-cyan-500/0 translate-x-[-100%] group-hover/skill:translate-x-[100%] transition-transform duration-1000"></div>
-
-                        {/* Square bullet */}
                         <div className="w-1.5 h-1.5 bg-slate-600 group-hover/skill:bg-cyan-400 group-hover/skill:shadow-[0_0_8px_rgba(6,182,212,1)] transition-all rounded-sm"></div>
-
-                        <span className="text-sm font-medium text-slate-300 group-hover/skill:text-white transition-colors z-10 font-mono">
-                          {skill}
-                        </span>
+                        <span className="text-sm font-medium text-slate-300 group-hover/skill:text-white transition-colors z-10 font-mono">{skill}</span>
                       </motion.div>
                     ))}
                   </div>
 
-                  {/* Decorative corner brackets */}
                   <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
                   <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500/0 group-hover:border-cyan-500/50 transition-colors duration-300"></div>
                 </motion.div>
@@ -979,7 +1040,6 @@ function App() {
           </div>
         </section>
 
-        {/* FOOTER */}
         <section className="border-t border-white/10 pt-16 pb-8 text-center flex flex-col items-center">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Let's build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">great.</span>
@@ -1010,7 +1070,6 @@ function App() {
               exit={{ scale: 0.95, y: 20 }}
               className="bg-[#0a0a0f] border border-cyan-500/30 rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col shadow-[0_0_50px_rgba(6,182,212,0.15)] overflow-hidden relative"
             >
-              {/* Modal Header */}
               <div className="p-6 border-b border-white/10 flex items-start justify-between bg-white/[0.02]">
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-1">
@@ -1027,7 +1086,6 @@ function App() {
                 </button>
               </div>
 
-              {/* Modal Body (Scrollable) */}
               <div className="p-6 overflow-y-auto custom-scrollbar space-y-4">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/5">
                   <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">Duration:</span>
@@ -1042,7 +1100,6 @@ function App() {
                 ))}
               </div>
 
-              {/* Modal Footer */}
               <div className="p-4 border-t border-white/10 bg-white/[0.02] text-center">
                 <button onClick={() => setSelectedExperience(null)} className="text-xs font-mono text-slate-500 hover:text-white transition">
                   [ CLOSE_WINDOW ]
