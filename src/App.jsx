@@ -565,7 +565,7 @@ function App() {
     { label: "Open To", value: "Frontend / Full-Stack Roles", icon: "🎯" },
   ];
   const certifications = resume.certifications || [
-    { title: "Star Performer Award", org: "Compuraphs", icon: "🏆" },
+    { title: "Star Performer Award", org: "iEnergizer Services Pvt. Ltd.", icon: "🏆" },
     { title: "Full Stack UI Cert", org: "Naresh IT", icon: "🎓" },
     { title: "Production Support L2/L3", org: "Razorpay", icon: "🛡️" },
   ];
