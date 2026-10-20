@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import client from './api/client';
 
 // 👇 REPLACE THIS WITH YOUR ACTUAL GITHUB TOKEN AND DETAILS 👇
-const GITHUB_TOKEN = "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"; 
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const GITHUB_OWNER = "Susantanayak1999"; 
 const GITHUB_REPO = "susanta_portfolio_new"; 
 
