@@ -11,6 +11,7 @@ import { io } from 'socket.io-client';
 import { Tilt } from 'react-tilt';
 import { TypeAnimation } from 'react-type-animation';
 import { X, Code2, Layout, Server, Terminal, Database, Cpu, Cloud, GitBranch, Phone, Mail, User, CheckCircle } from 'lucide-react';
+import { fallbackResume } from './fallbackData';
 
 // --- 1. The Interactive Contact HUD (For Navbar) ---
 function ContactHUD({ resume, isOpen, onClose }) {
@@ -899,7 +900,7 @@ function ArchitectureCarousel() {
 // --- 17. Main App Component ---
 function App() {
   const navigate = useNavigate();
-  const [resume, setResume] = useState(null);
+  const [resume, setResume] = useState(fallbackResume);
   const [error, setError] = useState(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -943,14 +944,25 @@ function App() {
   }, [showAbout, selectedExperience, showContactModal, showRobotSequence]);
 
   useEffect(() => {
-    client.get('/resume').then(res => setResume(res.data)).catch(err => {
-      console.error("Error fetching data:", err);
-      setError("Failed to connect to the backend.");
-    });
+    // We don't show a loading screen anymore. We just fetch in the background.
+    client.get('/resume')
+      .then(res => {
+        // Once the backend wakes up, we replace the fallback with the real data
+        if (res.data) setResume(res.data);
+      })
+      .catch(err => {
+        console.error("Backend asleep or error. Using fallback data.", err);
+        // We do nothing here. The site stays on the fallback data.
+      });
+
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const socketUrl = isLocal ? 'http://localhost:5000' : 'https://susanta-portfolio-api.onrender.com';
     const socket = io(socketUrl);
-    socket.on('resumeUpdated', (newResumeData) => { setResume(newResumeData); });
+
+    socket.on('resumeUpdated', (newResumeData) => {
+      if (newResumeData) setResume(newResumeData);
+    });
+
     return () => socket.disconnect();
   }, []);
 
@@ -983,26 +995,26 @@ function App() {
     else { handleAboutClick(); }
   };
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050508] text-red-500 font-mono">
-        <h1 className="text-2xl font-bold mb-4">CONNECTION_FAILED</h1>
-        <p className="text-slate-400 mb-6">{error}</p>
-        <button onClick={() => window.location.reload()} className="bg-cyan-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-cyan-400 transition">
-          [ RETRY_CONNECTION ]
-        </button>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col items-center justify-center bg-[#050508] text-red-500 font-mono">
+  //       <h1 className="text-2xl font-bold mb-4">CONNECTION_FAILED</h1>
+  //       <p className="text-slate-400 mb-6">{error}</p>
+  //       <button onClick={() => window.location.reload()} className="bg-cyan-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-cyan-400 transition">
+  //         [ RETRY_CONNECTION ]
+  //       </button>
+  //     </div>
+  //   );
+  // }
 
-  if (!resume) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050508] text-white">
-        <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-6"></div>
-        <p className="font-mono text-cyan-400 text-sm animate-pulse">Waking up server... This may take up to 50 seconds.</p>
-      </div>
-    );
-  }
+  // if (!resume) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col items-center justify-center bg-[#050508] text-white">
+  //       <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+  //       <p className="font-mono text-cyan-400 text-sm animate-pulse">Waking up server... This may take up to 50 seconds.</p>
+  //     </div>
+  //   );
+  // }
 
   const currentlyBuilding = resume.currentlyBuilding || [
     { label: "Active Project", value: "AI-Powered Portfolio CMS", icon: "⚡" },
