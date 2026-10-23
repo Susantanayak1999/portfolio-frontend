@@ -309,6 +309,10 @@ function BootLoader({ onComplete }) {
   ];
 
   useEffect(() => {
+    // Prevent double-run in React Strict Mode
+    let hasCompleted = false;
+
+    // 1. Typing effect
     let currentLine = 0;
     let currentChar = 0;
     let displayText = "";
@@ -329,22 +333,33 @@ function BootLoader({ onComplete }) {
       }
     }, 30);
 
+    // 2. Fade out timer
     const timer = setTimeout(() => {
-      if (containerRef.current) {
+      if (containerRef.current && !hasCompleted) {
+        hasCompleted = true;
         gsap.to(containerRef.current, {
           opacity: 0,
           duration: 0.8,
           ease: "power2.inOut",
-          onComplete: onComplete
+          onComplete: () => {
+            // Force the parent to unmount the loader
+            if (onComplete) onComplete();
+          }
         });
       }
-    }, 3500);
+    }, 3500); // 3.5 seconds
 
+    // Cleanup
     return () => {
       clearInterval(typeInterval);
       clearTimeout(timer);
+      // Kill any lingering GSAP animations
+      if (containerRef.current) {
+        gsap.killTweensOf(containerRef.current);
+      }
     };
-  }, [onComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div ref={containerRef} className="fixed inset-0 z-[9999] bg-[#020205] flex flex-col items-center justify-center overflow-hidden font-mono">
@@ -911,6 +926,17 @@ function App() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showRobotSequence, setShowRobotSequence] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
+
+  useEffect(() => {
+    // Only log the visit once per session
+    if (!sessionStorage.getItem('visitLogged')) {
+      client.post('/analytics/log', {
+        page: window.location.pathname
+      }).then(() => {
+        sessionStorage.setItem('visitLogged', 'true');
+      }).catch(err => console.log("Analytics failed", err));
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
