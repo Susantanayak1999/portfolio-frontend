@@ -929,7 +929,8 @@ function App() {
 
   useEffect(() => {
     // Only log the visit once per session
-    if (!sessionStorage.getItem('visitLogged')) {
+    if (false && !sessionStorage.getItem('visitLogged')) { // 👈 Added 'false &&' here
+
       client.post('/analytics/log', {
         page: window.location.pathname
       }).then(() => {
