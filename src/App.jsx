@@ -1488,7 +1488,36 @@ function App() {
         )}
       </AnimatePresence>
 
-      <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2, type: "spring" }} onClick={handleDownloadResume} className="fixed bottom-6 right-6 z-[90] group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white p-4 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all" aria-label="Download Resume">
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 2, type: "spring" }}
+        onClick={async () => {
+          try {
+            // Fetch the PDF from Cloudinary
+            const response = await fetch(resume.hero.pdfUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a temporary link to force the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Susanta_Nayak_Resume.pdf';
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            link.remove();
+            window.URL.revokeObjectURL(url);
+          } catch (error) {
+            console.error("Download failed:", error);
+            // Fallback: just open the URL if the fetch fails
+            window.open(resume.hero.pdfUrl, '_blank');
+          }
+        }}
+        className="fixed bottom-6 right-6 z-[90] group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white p-4 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all"
+        aria-label="Download Resume"
+      >
         <svg className="w-6 h-6 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
         <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0a0a0f] border border-cyan-500/30 text-cyan-400 text-xs font-mono px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">Download_Resume.pdf</span>
       </motion.button>
